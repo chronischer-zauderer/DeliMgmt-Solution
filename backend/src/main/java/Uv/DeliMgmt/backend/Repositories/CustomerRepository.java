@@ -3,5 +3,13 @@ package Uv.DeliMgmt.backend.Repositories;
 import Uv.DeliMgmt.backend.Models.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CustomerRepository extends JpaRepository<Customer, Long> {}
+import java.util.List;
+import java.util.Optional;
+
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    List<Customer> findByNameContainingIgnoreCase(String name);
+    Optional<Customer> findByEmail(String email);
+}
+
+
 
