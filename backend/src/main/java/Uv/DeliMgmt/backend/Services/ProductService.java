@@ -1,5 +1,6 @@
 package Uv.DeliMgmt.backend.Services;
 
+import Uv.DeliMgmt.backend.Exception.ResourceNotFoundException;
 import Uv.DeliMgmt.backend.Models.Product;
 import Uv.DeliMgmt.backend.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,8 @@ public class ProductService {
     Optional<Product> GetProductById(Long id) {
         return productRepository.findById(id);
     }
-
+    //Delete
+    public void DeleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
 }
