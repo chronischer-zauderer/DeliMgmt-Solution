@@ -3,6 +3,7 @@ package Uv.DeliMgmt.backend.Controllers;
 import Uv.DeliMgmt.backend.Models.Product;
 import Uv.DeliMgmt.backend.Services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,8 +30,10 @@ public class ProductController {
         return productService.GetProductById(id);
     }
     //update
-
-    //
+    @PutMapping(value = "Actualizar", headers = "Accept=application/json")
+    public void updateProduct(@RequestBody Product product) {
+        productService.UpdateProduct(product);
+    }
     @DeleteMapping(value = "eliminar/{id}", headers = "Accept=application/json")
     public void deleteProduct(@PathVariable long id) {
         productService.DeleteProduct(id);
