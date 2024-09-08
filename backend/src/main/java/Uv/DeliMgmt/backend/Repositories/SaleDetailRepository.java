@@ -1,13 +1,13 @@
 package Uv.DeliMgmt.backend.Repositories;
 
-import Uv.DeliMgmt.backend.Models.Promotion;
 import Uv.DeliMgmt.backend.Models.SaleDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
+@Repository
 public interface SaleDetailRepository extends JpaRepository<SaleDetail, Long> {
-    List<SaleDetail> findBySaleId(Long saleId);
+    List<SaleDetail> findBySale_SaleId(Long saleId);
 }
+

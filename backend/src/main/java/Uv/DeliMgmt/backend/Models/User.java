@@ -1,20 +1,17 @@
 package Uv.DeliMgmt.backend.Models;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import Uv.DeliMgmt.backend.Models.Role;
+import java.time.LocalDateTime;
 
-// Getters and setters
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 @Entity
 @Table(name = "users")
 public class User {
@@ -29,10 +26,13 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING) // Asegúrate de usar EnumType.STRING o EnumType.ORDINAL según corresponda
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
 
-    // Otros campos y métodos getters/setters
-}
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+}
