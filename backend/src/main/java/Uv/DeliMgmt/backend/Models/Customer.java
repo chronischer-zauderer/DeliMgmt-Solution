@@ -34,5 +34,18 @@ public class Customer {
     private String address;
 
 
+    public String getFirstName() {
+
+
+        return "";
+    }
+
+    public String getPhoneNumber() {
+        return "";
+    }
+
+    public String getLastName() {
+        return "";
+    }
 }
 

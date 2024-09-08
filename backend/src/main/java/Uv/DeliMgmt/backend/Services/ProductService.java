@@ -44,4 +44,16 @@ public class ProductService {
     public List<Product> findByCategoryId(Long categoryId) {
         return productRepository.findByCategory_CategoryId(categoryId);
     }
+
+    public Product UpdateProduct(Long id, Product updatedProduct) {
+        return productRepository.findById(id).map(product -> {
+            product.setName(updatedProduct.getName());
+            product.setDescription(updatedProduct.getDescription());
+            product.setPrice(updatedProduct.getPrice());
+            product.setCategory(updatedProduct.getCategory());
+            product.setStockQuantity(updatedProduct.getStockQuantity());
+            // Actualizar otros campos según sea necesario
+            return productRepository.save(product);
+        }).orElseThrow(() -> new RuntimeException("Product not found with id " + id));
+    }
 }
