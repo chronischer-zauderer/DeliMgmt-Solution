@@ -8,16 +8,6 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findByNameContainingIgnoreCase(String name);
-
-    String getStockQuantity();
-
-    Long getCategory();
-
-    String getPrice();
-
-    String getName();
-
-    String getDescription();
+    List<Category> findByDescriptionContainingIgnoreCase(String description);
+    List<Category> findByCategoryId(Long id);
 }
-
-

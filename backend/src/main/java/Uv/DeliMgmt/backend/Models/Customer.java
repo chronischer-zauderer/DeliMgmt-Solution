@@ -9,6 +9,7 @@ import lombok.Setter;
 // Getters and setters
 @Getter
 @Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -33,19 +34,4 @@ public class Customer {
     @Column(name = "address")
     private String address;
 
-
-    public String getFirstName() {
-
-
-        return "";
-    }
-
-    public String getPhoneNumber() {
-        return "";
-    }
-
-    public String getLastName() {
-        return "";
-    }
 }
-

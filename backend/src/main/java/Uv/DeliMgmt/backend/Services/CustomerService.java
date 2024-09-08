@@ -1,9 +1,7 @@
 package Uv.DeliMgmt.backend.Services;
 
 import Uv.DeliMgmt.backend.Exception.ResourceNotFoundException;
-import Uv.DeliMgmt.backend.Models.Category;
 import Uv.DeliMgmt.backend.Models.Customer;
-import Uv.DeliMgmt.backend.Models.Product;
 import Uv.DeliMgmt.backend.Repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,11 +28,10 @@ public class CustomerService {
     // Update an existing customer
     public Customer updateCustomer(Long customerId, Customer customerDetails) {
         Customer existingCustomer = findById(customerId);
-
-        existingCustomer.setName(customerDetails.getFirstName());
-        existingCustomer.setName(customerDetails.getLastName());
+        // Set customer details
+        existingCustomer.setName(customerDetails.getName());
         existingCustomer.setEmail(customerDetails.getEmail());
-        existingCustomer.setPhone(customerDetails.getPhoneNumber());
+        existingCustomer.setPhone(customerDetails.getPhone());
         existingCustomer.setAddress(customerDetails.getAddress());
 
         return customerRepository.save(existingCustomer);
@@ -51,14 +48,5 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Customer updatedCustomer(Long id, Product updateCustomer) {
-        return customerRepository.findById(id).map(product -> {
-            product.setName(customerRepository.getName());
-            product.setEmail(customerRepository.getDescription());
-            product.setName(customerRepository.getPrice());
-
-            // Update other fields as needed
-            return customerRepository.save(product);
-        }).orElseThrow(() -> new RuntimeException("Product not found with id " + id));
-    }
+    // Removed the incorrect `updatedCustomer(Long id, Product updateCustomer)` method
 }

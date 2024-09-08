@@ -9,17 +9,8 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByNameContainingIgnoreCase(String name);
-    Optional<Customer> findByEmail(String email);
-
-    String getName();
-
-    String getDescription();
-
-    String getPrice();
-
-    Long getCategory();
-
+    List<Customer> findByPhone(String Phone);
+    List<Customer> findByAddress(String address);
+    List<Customer> findByEmail(String email);
 }
-
-
 
