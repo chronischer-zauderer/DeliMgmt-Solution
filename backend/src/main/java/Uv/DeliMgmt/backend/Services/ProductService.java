@@ -5,6 +5,8 @@ import Uv.DeliMgmt.backend.Models.Product;
 import Uv.DeliMgmt.backend.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,15 +47,25 @@ public class ProductService {
         return productRepository.findByCategory_CategoryId(categoryId);
     }
 
-    public Product UpdateProduct(Long id, Product updatedProduct) {
-        return productRepository.findById(id).map(product -> {
-            product.setName(updatedProduct.getName());
-            product.setDescription(updatedProduct.getDescription());
-            product.setPrice(updatedProduct.getPrice());
-            product.setCategory(updatedProduct.getCategory());
-            product.setStockQuantity(updatedProduct.getStockQuantity());
-            // Actualizar otros campos según sea necesario
-            return productRepository.save(product);
-        }).orElseThrow(() -> new RuntimeException("Product not found with id " + id));
+    public void UpdateProduct(Product updatedProduct) {
+        Optional<Product> existingProductOpt = productRepository.findById(updatedProduct.getProductId());
+
+        if (existingProductOpt.isPresent()) {
+            Product existingProduct = existingProductOpt.get();
+            // Actualiza los campos del producto existente con los del producto actualizado
+            existingProduct.setProductCode(updatedProduct.getProductCode());
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setDescription(updatedProduct.getDescription());
+            existingProduct.setCategory(updatedProduct.getCategory());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setSupplier(updatedProduct.getSupplier());
+            existingProduct.setStockQuantity(updatedProduct.getStockQuantity());
+            existingProduct.setImageUrl(updatedProduct.getImageUrl());
+            existingProduct.setUpdatedAt(LocalDateTime.now());
+
+            productRepository.save(existingProduct);  // Guardar los cambios
+        } else {
+            throw new RuntimeException("Product not found with id: " + updatedProduct.getProductId());
+        }
     }
 }

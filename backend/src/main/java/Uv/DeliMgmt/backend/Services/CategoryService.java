@@ -26,6 +26,7 @@ public class CategoryService {
         Category category = findById(categoryId);
         categoryRepository.delete(category);
     }
+
     // Update an existing category by its ID
     public void updateCategory(Long categoryId, Category categoryDetails) {
         Category existingCategory = findById(categoryId);
