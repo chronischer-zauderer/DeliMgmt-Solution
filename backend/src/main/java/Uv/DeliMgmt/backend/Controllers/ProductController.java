@@ -36,6 +36,6 @@ public class ProductController {
     }
     @DeleteMapping(value = "eliminar/{id}", headers = "Accept=application/json")
     public void deleteProduct(@PathVariable long id) {
-        productService.DeleteProduct(id);
+        productService.deleteProduct(id);
     }
 }

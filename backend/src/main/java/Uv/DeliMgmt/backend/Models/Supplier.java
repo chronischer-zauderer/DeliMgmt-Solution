@@ -34,6 +34,5 @@ public class Supplier {
     @Column(name = "address")
     private String address;
 
-    // Getters and setters
 }
 

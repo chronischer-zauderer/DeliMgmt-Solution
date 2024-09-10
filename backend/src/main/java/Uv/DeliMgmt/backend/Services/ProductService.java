@@ -40,8 +40,23 @@ public class ProductService {
     }
 
     //Delete
-    public void DeleteProduct(Long id) {
-        productRepository.deleteById(id);
+    public void deleteProduct(Long productId) {
+        // Busca el producto por su ID
+        Optional<Product> productOpt = productRepository.findById(productId);
+
+        if (productOpt.isPresent()) {
+            Product product = productOpt.get();
+
+            // Verifica si el producto tiene movimientos de inventario asociados
+            if (inventoryMovementRepository.existsByProduct(product)) {
+                throw new IllegalStateException("El producto tiene movimientos de inventario asociados y no se puede eliminar.");
+            }
+
+            // Si no hay movimientos, elimina el producto
+            productRepository.deleteById(productId);
+        } else {
+            throw new RuntimeException("Product not found with id: " + productId);
+        }
     }
 
     public List<Product> findByCategory(Category category) {

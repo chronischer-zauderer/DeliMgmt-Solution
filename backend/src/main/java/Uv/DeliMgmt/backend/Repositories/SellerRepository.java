@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SellerRepository extends JpaRepository<Seller, Integer> {
+public interface SellerRepository extends JpaRepository<Seller, Long> {
     List<Seller> findByNameContaining(String name);
 
 }
