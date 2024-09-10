@@ -47,9 +47,12 @@ table {
     border-radius: 0 10px 10px 0; 
   }
   
-
+.nav-link{
+    border-radius: 20px;
+}
 .navbar-nav a:hover{
     background-color: #99c4bc;
+    border-radius: 20px;
 }
 
 .container-Inventory{
