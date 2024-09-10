@@ -21,7 +21,7 @@ public class ProductController {
     public void createProduct(@RequestBody Product product) {
         productService.CreateProduct(product);
     }
-    @GetMapping(value = "Listar", headers = "Accept=application/json" )
+    @GetMapping(value = "Listar", headers = "Accept=application/json")
     public List<Product> listarProducts() {
         return productService.GetAllProducts();
     }
