@@ -21,7 +21,7 @@ public class ProductController {
     public void createProduct(@RequestBody Product product) {
         productService.CreateProduct(product);
     }
-    @GetMapping(value = "Listar", headers = "Accept=application/json" )
+    @GetMapping(value = "Listar", headers = "Accept=application/json")
     public List<Product> listarProducts() {
         return productService.GetAllProducts();
     }
@@ -36,6 +36,6 @@ public class ProductController {
     }
     @DeleteMapping(value = "eliminar/{id}", headers = "Accept=application/json")
     public void deleteProduct(@PathVariable long id) {
-        productService.DeleteProduct(id);
+        productService.deleteProduct(id);
     }
 }

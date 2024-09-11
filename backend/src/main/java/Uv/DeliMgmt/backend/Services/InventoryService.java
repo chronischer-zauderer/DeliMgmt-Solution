@@ -1,7 +1,10 @@
 package Uv.DeliMgmt.backend.Services;
 
-import Uv.DeliMgmt.backend.Models.Inventory;
-import Uv.DeliMgmt.backend.Repositories.InventoryRepository;
+import Uv.DeliMgmt.backend.Models.InventoryMovement;
+import Uv.DeliMgmt.backend.Models.MovementType;
+import Uv.DeliMgmt.backend.Models.Product;
+import Uv.DeliMgmt.backend.Repositories.InventoryMovementRepository;
+import Uv.DeliMgmt.backend.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,45 +14,72 @@ import java.util.Optional;
 
 @Service
 public class InventoryService {
-    private final InventoryRepository inventoryRepository;
+
+    private final InventoryMovementRepository inventoryMovementRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public InventoryService(InventoryRepository inventoryRepository) {
-        this.inventoryRepository = inventoryRepository;
+    public InventoryService(InventoryMovementRepository inventoryMovementRepository, ProductRepository productRepository) {
+        this.inventoryMovementRepository = inventoryMovementRepository;
+        this.productRepository = productRepository;
     }
 
-    // Create or update
-    public Inventory saveOrUpdateInventory(Inventory inventory) {
-        return inventoryRepository.save(inventory);
+    // Crear movimiento de inventario
+    public void addInventoryMovement(InventoryMovement movement) {
+        // Agrega la fecha actual al movimiento antes de guardarlo
+        movement.setMovementDate(LocalDateTime.now());
+        inventoryMovementRepository.save(movement);
     }
 
-    // Get all
-    public List<Inventory> getAllInventories() {
-        return inventoryRepository.findAll();
+    // Obtener todos los movimientos de inventario
+    public List<InventoryMovement> getAllInventoryMovements() {
+        return inventoryMovementRepository.findAll();
     }
 
-    // Read one
-    public Optional<Inventory> getInventoryById(Long productId) {
-        return inventoryRepository.findById(productId);
+    // Obtener un movimiento de inventario por ID
+    public Optional<InventoryMovement> getInventoryMovementById(Long movementId) {
+        return inventoryMovementRepository.findById(movementId);
     }
 
-    // Delete
-    public void deleteInventory(Long productId) {
-        inventoryRepository.deleteById(productId);
-    }
-    public void updateInventory(Inventory updatedInventory) {
-        Optional<Inventory> existingInventoryOpt = inventoryRepository.findById(updatedInventory.getProduct().getProductId());
-
-        if (existingInventoryOpt.isPresent()) {
-            Inventory existingInventory = existingInventoryOpt.get();
-            // Actualiza los campos del inventario existente con los del inventario actualizado
-            existingInventory.setCurrentStock(updatedInventory.getCurrentStock());
-            existingInventory.setLastUpdated(LocalDateTime.now());
-
-            inventoryRepository.save(existingInventory);  // Guardar los cambios
+    // Obtener movimientos de inventario por producto
+    public List<InventoryMovement> getInventoryMovementsByProduct(Long productId) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        if (productOpt.isPresent()) {
+            return inventoryMovementRepository.findByProduct(productOpt.get());
         } else {
-            throw new RuntimeException("Inventory not found for product with id: " + updatedInventory.getProduct().getProductId());
+            throw new RuntimeException("Product not found with id: " + productId);
         }
     }
 
+    // Obtener movimientos de inventario por tipo de movimiento (entrada/salida)
+    public List<InventoryMovement> getInventoryMovementsByType(MovementType movementType) {
+        return inventoryMovementRepository.findByMovementType(movementType);
+    }
+
+    // Actualizar un movimiento de inventario
+    public void updateInventoryMovement(Long movementId, InventoryMovement updatedMovement) {
+        Optional<InventoryMovement> existingMovementOpt = inventoryMovementRepository.findById(movementId);
+
+        if (existingMovementOpt.isPresent()) {
+            InventoryMovement existingMovement = existingMovementOpt.get();
+            existingMovement.setProduct(updatedMovement.getProduct());
+            existingMovement.setMovementType(updatedMovement.getMovementType());
+            existingMovement.setQuantity(updatedMovement.getQuantity());
+            existingMovement.setDescription(updatedMovement.getDescription());
+            existingMovement.setMovementDate(LocalDateTime.now()); // Actualizamos la fecha del movimiento
+            inventoryMovementRepository.save(existingMovement);
+        } else {
+            throw new RuntimeException("Inventory movement not found with id: " + movementId);
+        }
+    }
+
+    // Eliminar un movimiento de inventario
+    public void deleteInventoryMovement(Long movementId) {
+        inventoryMovementRepository.deleteById(movementId);
+    }
+
+    // Verificar si un producto tiene movimientos de inventario
+    public boolean existsInventoryMovementsForProduct(Product productId) {
+        return inventoryMovementRepository.existsByProduct(productId);
+    }
 }
