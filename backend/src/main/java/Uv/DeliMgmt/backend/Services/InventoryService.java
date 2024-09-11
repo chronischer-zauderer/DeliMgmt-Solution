@@ -1,5 +1,6 @@
 package Uv.DeliMgmt.backend.Services;
 
+import Uv.DeliMgmt.backend.Exception.ResourceNotFoundException;
 import Uv.DeliMgmt.backend.Models.InventoryMovement;
 import Uv.DeliMgmt.backend.Models.MovementType;
 import Uv.DeliMgmt.backend.Models.Product;
@@ -47,7 +48,7 @@ public class InventoryService {
         if (productOpt.isPresent()) {
             return inventoryMovementRepository.findByProduct(productOpt.get());
         } else {
-            throw new RuntimeException("Product not found with id: " + productId);
+            throw new ResourceNotFoundException("Product not found with id: " + productId);
         }
     }
 
@@ -69,17 +70,25 @@ public class InventoryService {
             existingMovement.setMovementDate(LocalDateTime.now()); // Actualizamos la fecha del movimiento
             inventoryMovementRepository.save(existingMovement);
         } else {
-            throw new RuntimeException("Inventory movement not found with id: " + movementId);
+            throw new ResourceNotFoundException("Inventory movement not found with id: " + movementId);
         }
     }
 
     // Eliminar un movimiento de inventario
     public void deleteInventoryMovement(Long movementId) {
+        if (!inventoryMovementRepository.existsById(movementId)) {
+            throw new ResourceNotFoundException("Inventory movement not found with id: " + movementId);
+        }
         inventoryMovementRepository.deleteById(movementId);
     }
 
     // Verificar si un producto tiene movimientos de inventario
-    public boolean existsInventoryMovementsForProduct(Product productId) {
-        return inventoryMovementRepository.existsByProduct(productId);
+    public boolean existsInventoryMovementsForProduct(Long productId) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        if (productOpt.isPresent()) {
+            return inventoryMovementRepository.existsByProduct(productOpt.get());
+        } else {
+            throw new ResourceNotFoundException("Product not found with id: " + productId);
+        }
     }
 }

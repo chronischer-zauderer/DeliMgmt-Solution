@@ -1,5 +1,6 @@
 package Uv.DeliMgmt.backend.Services;
 
+import Uv.DeliMgmt.backend.Models.Customer;
 import Uv.DeliMgmt.backend.Models.InventoryMovement;
 import Uv.DeliMgmt.backend.Models.Product;
 import Uv.DeliMgmt.backend.Models.MovementType;
@@ -52,5 +53,21 @@ public class InventoryMovementService {
     // Check if a product has inventory movements
     public boolean existsByProductId(Product productId) {
         return inventoryMovementRepository.existsByProduct(productId);
+    }
+    public void UpdateMovement(InventoryMovement updateMovement) {
+        Optional<InventoryMovement> existingInventoryMovementOpt = inventoryMovementRepository.findById(updateMovement.getMovementId());
+
+        if (existingInventoryMovementOpt.isPresent()) {
+            InventoryMovement existingInventoryMovement = existingInventoryMovementOpt.get();
+            // Actualiza los campos del producto existente con los del producto actualizado
+            existingInventoryMovement.setMovementDate(updateMovement.getMovementDate());
+            existingInventoryMovement.setMovementType(updateMovement.getMovementType());
+            existingInventoryMovement.setDescription(updateMovement.getDescription());
+            existingInventoryMovement.setQuantity(updateMovement.getQuantity());
+
+            inventoryMovementRepository.save(existingInventoryMovement);  // Guardar los cambios
+        } else {
+            throw new RuntimeException("Product not found with id: " + updateMovement.getMovementId());
+        }
     }
 }
