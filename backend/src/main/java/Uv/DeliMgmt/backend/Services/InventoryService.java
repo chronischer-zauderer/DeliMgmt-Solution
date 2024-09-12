@@ -79,7 +79,12 @@ public class InventoryService {
             throw new ResourceNotFoundException("Product not found with id: " + productId);
         }
     }
-
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+    public void deleteProduct(Long productId){
+        productRepository.deleteById(productId);
+    }
     // Obtener movimientos de inventario por tipo de movimiento (entrada/salida)
     public List<InventoryMovement> getInventoryMovementsByType(MovementType movementType) {
         return inventoryMovementRepository.findByMovementType(movementType);
