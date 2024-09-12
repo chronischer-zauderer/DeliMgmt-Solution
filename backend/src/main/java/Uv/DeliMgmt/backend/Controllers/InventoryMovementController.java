@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/inventory")
+@RequestMapping("/api/inventorymovement")
 public class InventoryMovementController {
     private final InventoryMovementService inventoryMovementService;
 

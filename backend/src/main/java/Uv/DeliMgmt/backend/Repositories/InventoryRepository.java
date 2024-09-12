@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
+
     // Encuentra un inventario por el ID del producto
     Optional<Inventory> findByProductId(Long productId);
 
@@ -25,4 +26,5 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     // Encuentra todos los inventarios que fueron actualizados antes de una fecha dada
     List<Inventory> findByLastUpdatedBefore(LocalDateTime dateTime);
+
 }

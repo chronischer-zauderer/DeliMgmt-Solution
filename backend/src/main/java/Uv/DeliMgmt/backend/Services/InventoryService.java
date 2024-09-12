@@ -1,10 +1,12 @@
 package Uv.DeliMgmt.backend.Services;
 
 import Uv.DeliMgmt.backend.Exception.ResourceNotFoundException;
+import Uv.DeliMgmt.backend.Models.Inventory;
 import Uv.DeliMgmt.backend.Models.InventoryMovement;
 import Uv.DeliMgmt.backend.Models.MovementType;
 import Uv.DeliMgmt.backend.Models.Product;
 import Uv.DeliMgmt.backend.Repositories.InventoryMovementRepository;
+import Uv.DeliMgmt.backend.Repositories.InventoryRepository;
 import Uv.DeliMgmt.backend.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +20,13 @@ public class InventoryService {
 
     private final InventoryMovementRepository inventoryMovementRepository;
     private final ProductRepository productRepository;
+    private final InventoryRepository inventoryRepository;
 
     @Autowired
-    public InventoryService(InventoryMovementRepository inventoryMovementRepository, ProductRepository productRepository) {
+    public InventoryService(InventoryMovementRepository inventoryMovementRepository, ProductRepository productRepository, InventoryRepository inventoryRepository) {
         this.inventoryMovementRepository = inventoryMovementRepository;
         this.productRepository = productRepository;
+        this.inventoryRepository = inventoryRepository;
     }
 
     // Crear movimiento de inventario
@@ -30,6 +34,30 @@ public class InventoryService {
         // Agrega la fecha actual al movimiento antes de guardarlo
         movement.setMovementDate(LocalDateTime.now());
         inventoryMovementRepository.save(movement);
+
+        // Actualizar el stock del producto
+        Optional<Product> productOpt = productRepository.findById(movement.getProduct().getProductId());
+        if (productOpt.isPresent()) {
+            Product product = productOpt.get();
+            Optional<Inventory> inventoryOpt = inventoryRepository.findById(product.getProductId());
+            Inventory inventory;
+            if (inventoryOpt.isPresent()) {
+                inventory = inventoryOpt.get();
+                if (movement.getMovementType() == MovementType.in) {
+                    inventory.setCurrentStock(inventory.getCurrentStock() + movement.getQuantity());
+                } else if (movement.getMovementType() == MovementType.out) {
+                    inventory.setCurrentStock(inventory.getCurrentStock() - movement.getQuantity());
+                }
+                inventory.setLastUpdated(LocalDateTime.now());
+            } else {
+                // Si no existe el inventario para el producto, crear uno nuevo
+                inventory = new Inventory();
+                inventory.setProductId(product.getProductId());
+                inventory.setCurrentStock(movement.getQuantity());
+                inventory.setLastUpdated(LocalDateTime.now());
+            }
+            inventoryRepository.save(inventory);
+        }
     }
 
     // Obtener todos los movimientos de inventario
@@ -91,4 +119,5 @@ public class InventoryService {
             throw new ResourceNotFoundException("Product not found with id: " + productId);
         }
     }
+
 }
