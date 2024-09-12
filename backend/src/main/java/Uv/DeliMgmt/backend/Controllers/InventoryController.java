@@ -2,6 +2,7 @@ package Uv.DeliMgmt.backend.Controllers;
 
 import Uv.DeliMgmt.backend.Models.InventoryMovement;
 import Uv.DeliMgmt.backend.Models.MovementType;
+import Uv.DeliMgmt.backend.Models.Product;
 import Uv.DeliMgmt.backend.Services.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,10 @@ public class InventoryController {
     public List<InventoryMovement> getInventoryMovementsByProduct(@PathVariable Long productId) {
         return inventoryService.getInventoryMovementsByProduct(productId);
     }
+    @GetMapping(value = "listarProductos", headers = "Accept=application/json")
+    public List<Product> getAllProducs() {
+        return inventoryService.getAllProducts();
+    }
 
     // Obtener movimientos de inventario por tipo (entrada/salida)
     @GetMapping(value = "listarPorTipo/{movementType}", headers = "Accept=application/json")
@@ -60,5 +65,9 @@ public class InventoryController {
     @DeleteMapping(value = "eliminar/{id}", headers = "Accept=application/json")
     public void deleteInventoryMovement(@PathVariable Long id) {
         inventoryService.deleteInventoryMovement(id);
+    }
+    @DeleteMapping(value = "eliminarProducto/{id}", headers = "Accept=application/json")
+    public void deleteProduct(@PathVariable Long id) {
+        inventoryService.deleteProduct(id);
     }
 }
