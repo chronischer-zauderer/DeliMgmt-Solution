@@ -71,4 +71,7 @@ public class CategoryService {
             throw new RuntimeException("Product not found with id: " + updatedcategory.getCategoryId());
         }
     }
+    public void DeleteCategory(Long id) {
+        categoryRepository.deleteById(id);
+    }
 }

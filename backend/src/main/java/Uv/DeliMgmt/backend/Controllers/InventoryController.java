@@ -5,6 +5,7 @@ import Uv.DeliMgmt.backend.Models.MovementType;
 import Uv.DeliMgmt.backend.Models.Product;
 import Uv.DeliMgmt.backend.Services.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +48,10 @@ public class InventoryController {
     @GetMapping(value = "listarProductos", headers = "Accept=application/json")
     public List<Product> getAllProducs() {
         return inventoryService.getAllProducts();
+    }
+    @PostMapping(value = "CrearProducto",headers = "Accept=application/json")
+    public void CreateProduct(@RequestBody Product product) {
+        inventoryService.createProduct(product);
     }
 
     // Obtener movimientos de inventario por tipo (entrada/salida)

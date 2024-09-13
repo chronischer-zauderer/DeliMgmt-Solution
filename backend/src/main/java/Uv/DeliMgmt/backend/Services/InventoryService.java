@@ -82,6 +82,9 @@ public class InventoryService {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+    public void createProduct(Product product) {
+        productRepository.save(product);
+    }
     public void deleteProduct(Long productId){
         productRepository.deleteById(productId);
     }
