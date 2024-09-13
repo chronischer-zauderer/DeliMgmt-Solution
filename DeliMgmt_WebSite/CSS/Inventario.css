@@ -1,9 +1,16 @@
 body {
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
-nav{
-    width: 100%;
+nav {
+  height: 60px; /* Ajusta según la altura de tu barra de navegación */
+  width: 100%;
+  background-color: #333; /* Color de fondo para la barra de navegación */
+  position: fixed; /* Para mantenerla fija en la parte superior */
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Asegúrate de que esté por encima del resto del contenido */
 }
+
 
 table {
     width: 800px;
@@ -55,16 +62,16 @@ table {
     border-radius: 20px;
 }
 
-.container-Inventory{
-    padding-inline: 10px;
-    margin-top: 3%;
-    margin-left: 2%;
-    width: 1150px;
-    height: 650px;
-    background: #dcf8f3;
-    border-radius: 2%;
-    border-style:inset;
-    overflow: hidden;
+.container-Inventory {
+  padding: 10px;
+  margin: 3% auto; /* Centra horizontalmente y añade margen superior e inferior */
+  max-width: 1150px; /* Limita el ancho máximo */
+  width: 100%; /* Asegura que el contenedor se ajuste al ancho disponible hasta el máximo */
+  height: 700px;
+  background: #dcf8f3;
+  border-radius: 2%;
+  border-style: inset;
+  overflow: hidden;
 }
 .scrollable{
   max-height:550px ;
