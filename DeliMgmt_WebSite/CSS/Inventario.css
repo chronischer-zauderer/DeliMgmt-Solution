@@ -13,7 +13,7 @@ table {
     border-radius: 10px; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     overflow: hidden; 
-  }
+}
   
   th {
     background-color: #99c4bc; 
@@ -64,6 +64,19 @@ table {
     background: #dcf8f3;
     border-radius: 2%;
     border-style:inset;
+    overflow: hidden;
+}
+.scrollable{
+  max-height:550px ;
+  max-width: 812px;
+  overflow-y: auto;
+}
+.scrollable::-webkit-scrollbar{
+  width: 10px;
+}
+.scrollable::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
 }
 .container-Search{
     width: 300px;

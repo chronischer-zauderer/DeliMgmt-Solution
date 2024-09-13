@@ -34,6 +34,7 @@ public class CategoryController {
     }
     @DeleteMapping(value = "eliminar/{id}", headers = "Accept=application/json")
     public void deleteCategory(@PathVariable Long id) {
-
+        categoryService.DeleteCategory(id); // Llamar al servicio para eliminar la categoría
     }
+
 }
