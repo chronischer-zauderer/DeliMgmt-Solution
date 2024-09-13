@@ -4,8 +4,8 @@ import { fetchSuppliers } from './supplier.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await updateTable();
-  await loadCategoryOptions(); // Cargar las categorías en el dropdown
-  await loadSupplierOptions(); // Cargar los proveedores en el dropdown
+  await loadCategoryOptions();
+  await loadSupplierOptions();
 });
 
 async function updateTable() {
@@ -54,19 +54,27 @@ async function loadCategoryOptions() {
     const categories = await fetchCategories();
     categorySelect.innerHTML = '';
     
-    // Agregar la opción para crear una nueva categoría
-    const newCategoryOption = document.createElement('option');
-    newCategoryOption.value = 'nueva-categoria';
-    newCategoryOption.textContent = 'Crear nueva categoría';
-    categorySelect.appendChild(newCategoryOption);
+    // Agregar una opción por defecto
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Selecciona una categoría';
+    categorySelect.appendChild(defaultOption);
     
     // Agregar las categorías obtenidas de la API
     categories.forEach(category => {
       const option = document.createElement('option');
-      option.value = category.id;
+      option.value = category.categoryId;
       option.textContent = category.name;
       categorySelect.appendChild(option);
     });
+
+    // Agregar la opción para crear una nueva categoría al final
+    const newCategoryOption = document.createElement('option');
+    newCategoryOption.value = 'nueva-categoria';
+    newCategoryOption.textContent = 'Crear nueva categoría';
+    categorySelect.appendChild(newCategoryOption);
+
+    console.log('Categorías cargadas:', categories);
   } catch (error) {
     console.error('Error loading categories:', error);
   }
@@ -93,7 +101,8 @@ async function loadSupplierOptions() {
     // Agregar los proveedores obtenidos de la API
     suppliers.forEach(supplier => {
       const option = document.createElement('option');
-      option.value = supplier.id;
+      option.value = supplier.supplierId;
+      console.log(option);
       option.textContent = supplier.name;
       supplierSelect.appendChild(option);
     });
@@ -103,35 +112,54 @@ async function loadSupplierOptions() {
 }
 
 document.querySelector('.btn-add-product').addEventListener('click', async () => {
-  // Obtén los valores de los campos de entrada
+  const selectElementCategory = document.querySelector('#Categoria');
+  const selectElementProveedor = document.querySelector('#Proveedor');
+
+  console.log('Elemento select de Categoría:', selectElementCategory);
+  console.log('Elemento select de Proveedor:', selectElementProveedor);
+
+  if (!selectElementCategory || !selectElementProveedor) {
+    console.error('No se encontraron los elementos select. Verifica los IDs en el HTML.');
+    return;
+  }
+
+  console.log('Valor actual del select de Categoría:', selectElementCategory.value);
+  console.log('Valor actual del select de Proveedor:', selectElementProveedor.value);
+
+  const categoryId = selectElementCategory.value ? parseInt(selectElementCategory.value) : null;
+  const supplierId = selectElementProveedor.value ? parseInt(selectElementProveedor.value) : null;
+
+  console.log('categoryId después de parseInt:', categoryId);
+  console.log('supplierId después de parseInt:', supplierId);
+
+  // Obtener otros valores del formulario
   const productName = document.querySelector('input[placeholder="Nombre"]').value;
-  const categoryId = document.querySelector('#Categoria').value;
   const price = parseFloat(document.querySelector('input[placeholder="Precio"]').value);
-  const supplierId = document.querySelector('#Proveedor').value;
   const stockQuantity = parseInt(document.querySelector('input[placeholder="Stock"]').value);
   const description = document.querySelector('input[placeholder="Descripción"]').value;
 
-  // Validar y formatear los datos
-  const newProduct = { 
-    productCode: '', // Asume que el código del producto se generará o se ingresará en algún campo
-    name: productName || 'Sin nombre', 
-    category: categoryId && categoryId !== 'nueva-categoria' ? { categoryId: parseInt(categoryId) } : null,
-    price: isNaN(price) ? 0 : price, 
-    supplier: supplierId && supplierId !== 'nuevo-proveedor' ? { supplierId: parseInt(supplierId) } : null,
+  // Crear el objeto del nuevo producto
+  const newProduct = {
+    productCode: '', // Asumiendo que se generará automáticamente
+    name: productName || 'Sin nombre',
+    category: categoryId !== null ? { categoryId: categoryId } : null,
+    price: isNaN(price) ? 0 : price,
+    supplier: supplierId !== null ? { supplierId: supplierId } : null,
     stockQuantity: isNaN(stockQuantity) ? 0 : stockQuantity,
     description: description || 'Sin descripción'
   };
 
-  // Imprimir el JSON antes de enviar
-  console.log('Creating product:', newProduct);
+  console.log('Objeto newProduct completo:', newProduct);
 
   try {
-    await createProduct(newProduct);
-    await updateTable(); // Recargar productos después de agregar uno nuevo
+    const createdProduct = await createProduct(newProduct);
+    console.log('Producto creado exitosamente:', createdProduct);
+    await updateTable();
   } catch (error) {
-    console.error('Error adding product:', error);
+    console.error('Error al crear el producto:', error);
   }
-});
+}); 
+
 
 
 document.querySelector('table').addEventListener('click', async (event) => {
