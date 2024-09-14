@@ -2,10 +2,14 @@ import { fetchProducts, createProduct, updateProduct, deleteProduct } from './ap
 import { fetchCategories } from './category.js';
 import { fetchSuppliers } from './supplier.js';
 
+let currentProductId = null; // Para almacenar el ID del producto que se está actualizando
+
 document.addEventListener('DOMContentLoaded', async () => {
   await updateTable();
   await loadCategoryOptions();
   await loadSupplierOptions();
+  await loadUpdateCategoryOptions();
+  await loadUpdateSupplierOptions();
 });
 
 async function updateTable() {
@@ -13,9 +17,9 @@ async function updateTable() {
   
   try {
     const products = await fetchProducts();
-    console.log('Fetched products:', products); // Depuración
-    
-    tbody.innerHTML = ''; // Limpiar contenido anterior
+    console.log('Productos obtenidos:', products);
+
+    tbody.innerHTML = ''; // Limpiar tabla
     
     products.forEach(product => {
       const category = product.category ? product.category.name : 'Sin categoría';
@@ -38,109 +42,77 @@ async function updateTable() {
       tbody.appendChild(row);
     });
   } catch (error) {
-    console.error('Error loading products:', error);
+    console.error('Error al cargar los productos:', error);
   }
 }
 
 async function loadCategoryOptions() {
   const categorySelect = document.querySelector('#Categoria');
+  await loadOptions(categorySelect, fetchCategories, 'categoryId', 'name', 'Selecciona una categoría');
   
-  if (!categorySelect) {
-    console.error('Error: #Categoria no se encontró en el DOM.');
-    return;
-  }
-  
-  try {
-    const categories = await fetchCategories();
-    categorySelect.innerHTML = '';
-    
-    // Agregar una opción por defecto
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = 'Selecciona una categoría';
-    categorySelect.appendChild(defaultOption);
-    
-    // Agregar las categorías obtenidas de la API
-    categories.forEach(category => {
-      const option = document.createElement('option');
-      option.value = category.categoryId;
-      option.textContent = category.name;
-      categorySelect.appendChild(option);
-    });
-
-    // Agregar la opción para crear una nueva categoría al final
-    const newCategoryOption = document.createElement('option');
-    newCategoryOption.value = 'nueva-categoria';
-    newCategoryOption.textContent = 'Crear nueva categoría';
-    categorySelect.appendChild(newCategoryOption);
-
-    console.log('Categorías cargadas:', categories);
-  } catch (error) {
-    console.error('Error loading categories:', error);
-  }
+  const newCategoryOption = document.createElement('option');
+  newCategoryOption.value = 'nueva-categoria';
+  newCategoryOption.textContent = 'Crear nueva categoría';
+  categorySelect.appendChild(newCategoryOption);
 }
 
 async function loadSupplierOptions() {
   const supplierSelect = document.querySelector('#Proveedor');
+  await loadOptions(supplierSelect, fetchSuppliers, 'supplierId', 'name', 'Selecciona un proveedor');
   
-  if (!supplierSelect) {
-    console.error('Error: #Proveedor no se encontró en el DOM.');
-    return;
-  }
-  
+  const newSupplierOption = document.createElement('option');
+  newSupplierOption.value = 'nuevo-proveedor';
+  newSupplierOption.textContent = 'Crear nuevo proveedor';
+  supplierSelect.appendChild(newSupplierOption);
+}
+
+async function loadUpdateCategoryOptions() {
+  const categorySelect = document.getElementById('updateProductCategory');
+  await loadOptions(categorySelect, fetchCategories, 'categoryId', 'name', 'Selecciona una categoría');
+}
+
+async function loadUpdateSupplierOptions() {
+  const supplierSelect = document.getElementById('updateProductSupplier');
+  await loadOptions(supplierSelect, fetchSuppliers, 'supplierId', 'name', 'Selecciona un proveedor');
+}
+
+async function loadOptions(selectElement, fetchFunction, valueKey, textKey, defaultText) {
   try {
-    const suppliers = await fetchSuppliers();
-    supplierSelect.innerHTML = '';
+    const items = await fetchFunction();
+    selectElement.innerHTML = '';
     
-    // Agregar la opción para crear un nuevo proveedor
-    const newSupplierOption = document.createElement('option');
-    newSupplierOption.value = 'nuevo-proveedor';
-    newSupplierOption.textContent = 'Crear nuevo proveedor';
-    supplierSelect.appendChild(newSupplierOption);
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = defaultText;
+    selectElement.appendChild(defaultOption);
     
-    // Agregar los proveedores obtenidos de la API
-    suppliers.forEach(supplier => {
+    items.forEach(item => {
       const option = document.createElement('option');
-      option.value = supplier.supplierId;
-      console.log(option);
-      option.textContent = supplier.name;
-      supplierSelect.appendChild(option);
+      option.value = item[valueKey];
+      option.textContent = item[textKey];
+      selectElement.appendChild(option);
     });
   } catch (error) {
-    console.error('Error loading suppliers:', error);
+    console.error(`Error al cargar opciones para ${selectElement.id}:`, error);
   }
 }
 
-document.querySelector('.btn-add-product').addEventListener('click', async () => {
+// Evento para crear un nuevo producto
+document.querySelector('.btn-outline-primary').addEventListener('click', async () => {
   const selectElementCategory = document.querySelector('#Categoria');
   const selectElementProveedor = document.querySelector('#Proveedor');
-
-  console.log('Elemento select de Categoría:', selectElementCategory);
-  console.log('Elemento select de Proveedor:', selectElementProveedor);
-
-  if (!selectElementCategory || !selectElementProveedor) {
-    console.error('No se encontraron los elementos select. Verifica los IDs en el HTML.');
-    return;
-  }
-
-  console.log('Valor actual del select de Categoría:', selectElementCategory.value);
-  console.log('Valor actual del select de Proveedor:', selectElementProveedor.value);
 
   const categoryId = selectElementCategory.value ? parseInt(selectElementCategory.value) : null;
   const supplierId = selectElementProveedor.value ? parseInt(selectElementProveedor.value) : null;
 
-  console.log('categoryId después de parseInt:', categoryId);
-  console.log('supplierId después de parseInt:', supplierId);
-
-  // Obtener otros valores del formulario
+  const productCode = document.querySelector('input[placeholder="Codigo De Producto"]').value;
   const productName = document.querySelector('input[placeholder="Nombre"]').value;
   const price = parseFloat(document.querySelector('input[placeholder="Precio"]').value);
   const stockQuantity = parseInt(document.querySelector('input[placeholder="Stock"]').value);
   const description = document.querySelector('input[placeholder="Descripción"]').value;
 
-  // Crear el objeto del nuevo producto
   const newProduct = {
-    productCode: '', // Asumiendo que se generará automáticamente
+    productCode,
     name: productName || 'Sin nombre',
     category: categoryId !== null ? { categoryId: categoryId } : null,
     price: isNaN(price) ? 0 : price,
@@ -149,46 +121,83 @@ document.querySelector('.btn-add-product').addEventListener('click', async () =>
     description: description || 'Sin descripción'
   };
 
-  console.log('Objeto newProduct completo:', newProduct);
-
   try {
-    const createdProduct = await createProduct(newProduct);
-    console.log('Producto creado exitosamente:', createdProduct);
+    await createProduct(newProduct);
     await updateTable();
   } catch (error) {
     console.error('Error al crear el producto:', error);
   }
-}); 
+});
 
-
-
+// Evento para abrir el modal de actualización
 document.querySelector('table').addEventListener('click', async (event) => {
   if (event.target.classList.contains('btn-update')) {
     const id = event.target.dataset.id;
-    const stockQuantity = prompt('Enter new stock quantity:');
+    console.log(id)
+    try {
+      const product = await fetchProducts(id); // Asegúrate de que esta función esté implementada para obtener un solo producto
+      
+      currentProductId = id;
+      
+      document.getElementById('updateProductCode').value = product.productCode || '';
+      document.getElementById('updateProductName').value = product.name || '';
+      document.getElementById('updateProductCategory').value = product.category ? product.category.categoryId : '';
+      document.getElementById('updateProductPrice').value = product.price || '';
+      document.getElementById('updateProductSupplier').value = product.supplier ? product.supplier.supplierId : '';
+      document.getElementById('updateProductStock').value = product.stockQuantity || '';
+      document.getElementById('updateProductDescription').value = product.description || '';
 
-    if (stockQuantity) {
-      const updatedProduct = { stockQuantity: parseInt(stockQuantity) };
-      try {
-        await updateProduct(id, updatedProduct);
-        await updateTable(); // Recargar productos después de actualizar
-      } catch (error) {
-        console.error('Error updating product:', error);
-      }
+      // Mostrar el modal
+      const updateModal = new bootstrap.Modal(document.getElementById('updateProductModal'));
+      updateModal.show();
+    } catch (error) {
+      console.error('Error al obtener los detalles del producto:', error);
     }
   }
 });
 
+// Evento para confirmar la actualización del producto
+document.getElementById('confirmUpdateProduct').addEventListener('click', async () => {
+  if (currentProductId === null) {
+    console.error('No se ha seleccionado ningún producto para actualizar');
+    return;
+  }
+
+  const updatedProduct = {
+    productId : currentProductId,
+    productCode: document.getElementById('updateProductCode').value,
+    name: document.getElementById('updateProductName').value,
+    category: { categoryId: document.getElementById('updateProductCategory').value },
+    price: parseFloat(document.getElementById('updateProductPrice').value),
+    supplier: { supplierId: document.getElementById('updateProductSupplier').value },
+    stockQuantity: parseInt(document.getElementById('updateProductStock').value),
+    description: document.getElementById('updateProductDescription').value
+    
+  };
+
+  try {
+    await updateProduct(currentProductId, updatedProduct);
+    await updateTable();
+    const updateModal = bootstrap.Modal.getInstance(document.getElementById('updateProductModal'));
+    updateModal.hide();
+    currentProductId = null; // Resetear el ID del producto actual
+  } catch (error) {
+    console.error('Error al actualizar el producto:', error);
+  }
+});
+
+// Evento para eliminar un producto
 document.querySelector('table').addEventListener('click', async (event) => {
   if (event.target.classList.contains('btn-delete')) {
     const id = event.target.dataset.id;
 
-    if (confirm('Are you sure you want to delete this product?')) {
+    if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
       try {
+        console.log(id);
         await deleteProduct(id);
-        await updateTable(); // Recargar productos después de eliminar
+        await updateTable();
       } catch (error) {
-        console.error('Error deleting product:', error);
+        console.error('Error al eliminar el producto:', error);
       }
     }
   }

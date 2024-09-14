@@ -57,7 +57,7 @@ export async function createProduct(product) {
 
 // Función para actualizar un producto
 export async function updateProduct(id, product) {
-  const response = await fetch(`http://localhost:8081/api/inventory/actualizarProducto/${id}`, {
+  const response = await fetch(`http://localhost:8081/api/inventory/Actualizar`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -71,10 +71,18 @@ export async function updateProduct(id, product) {
 
 // Función para eliminar un producto
 export async function deleteProduct(id) {
-  const response = await fetch(`http://localhost:8081/api/inventory/eliminarProducto/${id}`, {
-    method: 'DELETE',
-  });
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
+  try {
+      const response = await fetch(`http://localhost:8081/api/inventory/eliminarProducto/${id}`, {
+          method: 'DELETE',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      });
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      // Maneja la respuesta si es necesario
+  } catch (error) {
+      console.error('Error al eliminar el producto:', error);
   }
 }
