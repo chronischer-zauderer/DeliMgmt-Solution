@@ -85,7 +85,21 @@ public class InventoryService {
     public void createProduct(Product product) {
         productRepository.save(product);
     }
-    public void deleteProduct(Long productId){
+    public void deleteProduct(Long productId) {
+        if (!productRepository.existsById(productId)) {
+            throw new ResourceNotFoundException("Product not found with id: " + productId);
+        }
+
+        // Check if there are any inventory movements for the product
+        Product product = productRepository.findById(productId).orElseThrow(() ->
+                new ResourceNotFoundException("Product not found with id: " + productId));
+
+        if (inventoryMovementRepository.existsByProduct(product)) {
+            // Delete all inventory movements related to this product
+            inventoryMovementRepository.deleteByProduct(product);
+        }
+
+        // Finally, delete the product
         productRepository.deleteById(productId);
     }
     // Obtener movimientos de inventario por tipo de movimiento (entrada/salida)
@@ -125,6 +139,26 @@ public class InventoryService {
             return inventoryMovementRepository.existsByProduct(productOpt.get());
         } else {
             throw new ResourceNotFoundException("Product not found with id: " + productId);
+        }
+    }
+    public void UpdateProduct(Product updatedProduct) {
+        Optional<Product> existingProductOpt = productRepository.findById(updatedProduct.getProductId());
+
+        if (existingProductOpt.isPresent()) {
+            Product existingProduct = existingProductOpt.get();
+            // Actualiza los campos del producto existente con los del producto actualizado
+            existingProduct.setProductCode(updatedProduct.getProductCode());
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setDescription(updatedProduct.getDescription());
+            existingProduct.setCategory(updatedProduct.getCategory());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setSupplier(updatedProduct.getSupplier());
+            existingProduct.setStockQuantity(updatedProduct.getStockQuantity());
+            existingProduct.setImageUrl(updatedProduct.getImageUrl());
+            existingProduct.setUpdatedAt(LocalDateTime.now());
+            productRepository.save(existingProduct);  // Guardar los cambios
+        } else {
+            throw new RuntimeException("Product not found with id: " + updatedProduct.getProductId());
         }
     }
 

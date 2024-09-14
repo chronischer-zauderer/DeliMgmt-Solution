@@ -5,14 +5,14 @@ import Uv.DeliMgmt.backend.Models.MovementType;
 import Uv.DeliMgmt.backend.Models.Product;
 import Uv.DeliMgmt.backend.Services.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:5500")  // Permite solicitudes desde el frontend
+@CrossOrigin(origins = "http://127.0.0.1:5500")  // Allows requests from the frontend
 @RequestMapping("/api/inventory")
 public class InventoryController {
     private final InventoryService inventoryService;
@@ -22,57 +22,77 @@ public class InventoryController {
         this.inventoryService = inventoryService;
     }
 
-    // Crear un movimiento de inventario
+    // Create an inventory movement
     @PostMapping(value = "crear", headers = "Accept=application/json")
-    public void createInventoryMovement(@RequestBody InventoryMovement inventoryMovement) {
+    public ResponseEntity<Void> createInventoryMovement(@RequestBody InventoryMovement inventoryMovement) {
         inventoryService.addInventoryMovement(inventoryMovement);
+        return ResponseEntity.status(201).build();
     }
 
-    // Obtener todos los movimientos de inventario
+    // Get all inventory movements
     @GetMapping(value = "listar", headers = "Accept=application/json")
-    public List<InventoryMovement> getAllInventoryMovements() {
-        return inventoryService.getAllInventoryMovements();
+    public ResponseEntity<List<InventoryMovement>> getAllInventoryMovements() {
+        return ResponseEntity.ok(inventoryService.getAllInventoryMovements());
     }
 
-    // Obtener un movimiento de inventario por ID
+    // Get an inventory movement by ID
     @GetMapping(value = "listarPorId/{id}", headers = "Accept=application/json")
-    public Optional<InventoryMovement> getInventoryMovementById(@PathVariable Long id) {
-        return inventoryService.getInventoryMovementById(id);
+    public ResponseEntity<InventoryMovement> getInventoryMovementById(@PathVariable Long id) {
+        Optional<InventoryMovement> movement = inventoryService.getInventoryMovementById(id);
+        return movement.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Obtener movimientos de inventario por producto
+    // Get inventory movements by product
     @GetMapping(value = "listarPorProducto/{productId}", headers = "Accept=application/json")
-    public List<InventoryMovement> getInventoryMovementsByProduct(@PathVariable Long productId) {
-        return inventoryService.getInventoryMovementsByProduct(productId);
+    public ResponseEntity<List<InventoryMovement>> getInventoryMovementsByProduct(@PathVariable Long productId) {
+        return ResponseEntity.ok(inventoryService.getInventoryMovementsByProduct(productId));
     }
+
+    // Get all products
     @GetMapping(value = "listarProductos", headers = "Accept=application/json")
-    public List<Product> getAllProducs() {
-        return inventoryService.getAllProducts();
+    public ResponseEntity<List<Product>> getAllProducts() {
+        return ResponseEntity.ok(inventoryService.getAllProducts());
     }
-    @PostMapping(value = "CrearProducto",headers = "Accept=application/json")
-    public void CreateProduct(@RequestBody Product product) {
+
+    // Create a product
+    @PostMapping(value = "crearProducto", headers = "Accept=application/json")
+    public ResponseEntity<Void> createProduct(@RequestBody Product product) {
         inventoryService.createProduct(product);
+        return ResponseEntity.status(201).build();
     }
 
-    // Obtener movimientos de inventario por tipo (entrada/salida)
+    // Update a product
+    @PutMapping(value = "actualizarProducto", headers = "Accept=application/json")
+    public ResponseEntity<Void> updateProduct(@RequestBody Product product) {
+        inventoryService.UpdateProduct(product);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Get inventory movements by type
     @GetMapping(value = "listarPorTipo/{movementType}", headers = "Accept=application/json")
-    public List<InventoryMovement> getInventoryMovementsByType(@PathVariable MovementType movementType) {
-        return inventoryService.getInventoryMovementsByType(movementType);
+    public ResponseEntity<List<InventoryMovement>> getInventoryMovementsByType(@PathVariable MovementType movementType) {
+        return ResponseEntity.ok(inventoryService.getInventoryMovementsByType(movementType));
     }
 
-    // Actualizar un movimiento de inventario
+    // Update an inventory movement
     @PutMapping(value = "actualizar/{id}", headers = "Accept=application/json")
-    public void updateInventoryMovement(@PathVariable Long id, @RequestBody InventoryMovement updatedMovement) {
+    public ResponseEntity<Void> updateInventoryMovement(@PathVariable Long id, @RequestBody InventoryMovement updatedMovement) {
         inventoryService.updateInventoryMovement(id, updatedMovement);
+        return ResponseEntity.noContent().build();
     }
 
-    // Eliminar un movimiento de inventario
+    // Delete an inventory movement
     @DeleteMapping(value = "eliminar/{id}", headers = "Accept=application/json")
-    public void deleteInventoryMovement(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteInventoryMovement(@PathVariable Long id) {
         inventoryService.deleteInventoryMovement(id);
+        return ResponseEntity.noContent().build();
     }
+
+    // Delete a product
     @DeleteMapping(value = "eliminarProducto/{id}", headers = "Accept=application/json")
-    public void deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         inventoryService.deleteProduct(id);
+        inventoryService.deleteInventoryMovement(id);
+        return ResponseEntity.noContent().build();
     }
 }

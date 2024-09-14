@@ -12,5 +12,6 @@ public interface InventoryMovementRepository extends JpaRepository<InventoryMove
     List<InventoryMovement> findByProduct(Product product);
     List<InventoryMovement> findByMovementType(MovementType movementType);
     boolean existsByProduct(Product product);
+    void deleteByProduct(Product product);
 }
 
