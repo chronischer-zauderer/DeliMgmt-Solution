@@ -23,7 +23,7 @@ export async function createProduct(product) {
   console.log('Request body:', product); // Imprimir el cuerpo de la solicitud
 
   try {
-    const response = await fetch('http://localhost:8081/api/inventory/CrearProducto', {
+    const response = await fetch('http://localhost:8081/api/inventory/crearProducto', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
