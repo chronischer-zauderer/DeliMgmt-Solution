@@ -1,9 +1,7 @@
 package Uv.DeliMgmt.backend.Services;
 
 import Uv.DeliMgmt.backend.Models.Category;
-import Uv.DeliMgmt.backend.Models.InventoryMovement;
 import Uv.DeliMgmt.backend.Models.Product;
-import Uv.DeliMgmt.backend.Repositories.InventoryMovementRepository;
 import Uv.DeliMgmt.backend.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +19,6 @@ public class ProductService {
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
-    @Autowired
-    private InventoryMovementRepository inventoryMovementRepository;
 
     //Create
     public void CreateProduct(Product product) {
@@ -47,10 +43,6 @@ public class ProductService {
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
 
-            // Verifica si el producto tiene movimientos de inventario asociados
-            if (inventoryMovementRepository.existsByProduct(product)) {
-                throw new IllegalStateException("El producto tiene movimientos de inventario asociados y no se puede eliminar.");
-            }
 
             // Si no hay movimientos, elimina el producto
             productRepository.deleteById(productId);
