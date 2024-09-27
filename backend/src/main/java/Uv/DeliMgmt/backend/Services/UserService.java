@@ -51,4 +51,8 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+    public boolean validateUser(String username, String password) {
+        return false;
+    }
 }
