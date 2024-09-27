@@ -19,7 +19,7 @@ public class InventoryController {
     @Autowired
     public InventoryController(InventoryService inventoryService) {
         this.inventoryService = inventoryService;
-    }
+     }
 
 
     // Get all products
