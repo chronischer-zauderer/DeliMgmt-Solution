@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventario</title>
+  <link rel="stylesheet" href="../CSS/Inventario.css" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+</head>
+<body>
+  <nav class="navbar navbar-expand-sm" style="background-color: #e3f2fd">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">DeliMgmt</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link active" aria-current="page" href="Index.html">Exit</a>
+          <a class="nav-link active" href="Inventario.html">Inventario</a>
+          <a class="nav-link active" href="Ventas.html">Ventas</a>
+          <a class="nav-link active" href="Clientes.html">Clientes</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-Inventory">
+    <h1 style="font-size: 35px">Inventario</h1>
+    <div class="scrollable">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Categoria</th>
+            <th>Precio</th>
+            <th>Proveedor</th>
+            <th>Stock</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Aquí se llenará dinámicamente con JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="container-Search">
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+        <button class="btn btn-outline-success" type="submit">
+          <img src="../RESURCES/buscar.png" width="25px" />
+        </button>
+      </form>
+    </div>
+
+    <div class="container-imageProduct">
+      <img src="../RESURCES/uploadImg.png" width="200px" style="margin-top: 13%; margin-left: 13%" />
+    </div>
+
+    <div class="container-Descriptions">
+      <select id="Categoria" class="form-select" style="width: 300px; margin-top: 0.5%">
+        <option value="">Selecciona una categoría</option>
+        <option value="nueva-categoria">Crear nueva categoría</option>
+      </select>
+      <select id="Proveedor" class="form-select" style="width: 300px; margin-top: 0.5%">
+        <option value="">Selecciona un proveedor</option>
+        <option value="nuevo-proveedor">Crear nuevo proveedor</option>
+      </select>
+      <input class="form-control me-2" type="text" placeholder="Nombre" />
+      <input class="form-control me-2" type="number" placeholder="Precio" style="margin-top: 0.5%" />
+      <input class="form-control me-2" type="number" placeholder="Stock" style="margin-top: 0.5%" />
+      <input class="form-control me-2" type="text" placeholder="Descripción" style="margin-top: 0.5%" />
+      <input class="form-control me-2" type="text" placeholder="Codigo De Producto" style="margin-top: 0.5%" />
+    </div>
+
+    <div class="container-Buttons">
+      <!-- Botón para subir imagen -->
+      <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#fileUploadModal">
+        Subir Imagen
+      </button>
+      <!-- Botón para agregar producto -->
+      <button class="btn btn-outline-primary" type="button" id="btnAgregarProducto">Add</button>
+    </div>
+  </div>
+
+  <!-- Modal para subir archivos -->
+  <div class="modal fade" id="fileUploadModal" tabindex="-1" aria-labelledby="fileUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="fileUploadModalLabel">Subir Imagen</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container repository_upload" id="filepicker">
+            <div class="row">
+              <div class="col-md-3">
+                <ul class="nav flex-column nav-pills" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="pill" href="#upload-tab">Subir una imagen</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="pill" href="#google-drive-tab">Google Drive</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="pill" href="#dropbox-tab">Dropbox</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-md-9">
+                <div class="tab-content">
+                  <div id="upload-tab" class="tab-pane fade show active">
+                    <h6>Selecciona una imagen para subir</h6>
+                    <input type="file" class="form-control" accept="image/*" />
+                  </div>
+                  <div id="google-drive-tab" class="tab-pane fade">
+                    <h6>Selecciona una imagen de Google Drive</h6>
+                    <input type="text" class="form-control" placeholder="URL de Google Drive" />
+                  </div>
+                  <div id="dropbox-tab" class="tab-pane fade">
+                    <h6>Selecciona una imagen de Dropbox</h6>
+                    <input type="text" class="form-control" placeholder="URL de Dropbox" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary">Subir imagen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="updateProductModal" tabindex="-1" aria-labelledby="updateProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateProductModalLabel">Actualizar Producto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="updateProductCode" class="form-label">Código de Producto</label>
+                  <input type="text" class="form-control" id="updateProductCode" placeholder="Código de Producto">
+                </div>
+                <div class="mb-3">
+                  <label for="updateProductName" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="updateProductName" placeholder="Nombre del Producto">
+                </div>
+                <div class="mb-3">
+                  <label for="updateProductCategory" class="form-label">Categoría</label>
+                  <select id="updateProductCategory" class="form-select">
+                    <!-- Options will be populated dynamically -->
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="updateProductPrice" class="form-label">Precio</label>
+                  <input type="number" class="form-control" id="updateProductPrice" placeholder="Precio">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="updateProductSupplier" class="form-label">Proveedor</label>
+                  <select id="updateProductSupplier" class="form-select">
+                    <!-- Options will be populated dynamically -->
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="updateProductStock" class="form-label">Stock</label>
+                  <input type="number" class="form-control" id="updateProductStock" placeholder="Cantidad en Stock">
+                </div>
+                <div class="mb-3">
+                  <label for="updateProductDescription" class="form-label">Descripción</label>
+                  <textarea class="form-control" id="updateProductDescription" rows="3" placeholder="Descripción del Producto"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="updateProductImage" class="form-label">Imagen del Producto</label>
+                  <input type="file" class="form-control" id="updateProductImage" accept="image/*">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="confirmUpdateProduct">Actualizar Producto</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Incluir los scripts de JavaScript -->
+  <script src="../Js/api.js" type="module"></script>
+  <script src="../Js/inventario.js" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
