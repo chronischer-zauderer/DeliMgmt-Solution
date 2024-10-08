@@ -1,0 +1,109 @@
+body {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+nav {
+height: 60px; /* Ajusta según la altura de tu barra de navegación */
+width: 100%;
+background-color: #333; /* Color de fondo para la barra de navegación */
+position: fixed; /* Para mantenerla fija en la parte superior */
+top: 0;
+left: 0;
+z-index: 1000; /* Asegúrate de que esté por encima del resto del contenido */
+}
+
+
+table {
+  width: 800px;
+  height: 550px;
+  border-collapse: collapse;
+  background-color: #f9f9f9; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  overflow: hidden; 
+}
+
+th {
+  background-color: #99c4bc; 
+  color: white; 
+  text-align: left; 
+  padding: 12px; 
+  font-weight: bold; 
+}
+
+td {
+  padding: 12px; 
+  border-bottom: 1px solid #ddd; 
+  color: #333; 
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #e0f7fa; 
+}
+
+td:first-child,
+th:first-child {
+  border-radius: 10px 0 0 10px; 
+}
+
+td:last-child,
+th:last-child {
+  border-radius: 0 10px 10px 0; 
+}
+
+.nav-link{
+  border-radius: 20px;
+}
+.navbar-nav a:hover{
+  background-color: #99c4bc;
+  border-radius: 20px;
+}
+
+.container-Inventory {
+padding: 10px;
+margin: 3% auto; /* Centra horizontalmente y añade margen superior e inferior */
+max-width: 1150px; /* Limita el ancho máximo */
+width: 100%; /* Asegura que el contenedor se ajuste al ancho disponible hasta el máximo */
+height: 700px;
+background: #dcf8f3;
+border-radius: 2%;
+border-style: inset;
+overflow: hidden;
+}
+.scrollable{
+max-height:550px ;
+max-width: 812px;
+overflow-y: auto;
+}
+.scrollable::-webkit-scrollbar{
+width: 10px;
+}
+.scrollable::-webkit-scrollbar-thumb {
+background-color: #ccc;
+border-radius: 10px;
+}
+.container-Search{
+  width: 300px;
+  margin-left: 73%;
+  margin-top: -52.5%;
+}
+.container-imageProduct{
+  width: 250px;
+  height: 250px;
+  background: #ffffff;
+  margin-left: 73%;
+  margin-top: 1%;
+  border-radius: 5%;
+}
+.container-Descriptions{
+  width: 300px;
+  margin-left: 73%;
+  margin-top: 1%;
+}
+.container-Buttons{
+  margin-left: 73%;
+  margin-top: 3.5%;
+}

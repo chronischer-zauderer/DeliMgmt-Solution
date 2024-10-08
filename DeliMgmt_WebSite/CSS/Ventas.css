@@ -1,0 +1,11 @@
+body {
+    font-family: "Arial", sans-serif;
+}
+
+.nav-link{
+    border-radius: 20px;
+}
+.navbar-nav a:hover{
+    background-color: #99c4bc;
+    border-radius: 20px;
+}
