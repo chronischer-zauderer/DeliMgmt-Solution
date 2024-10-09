@@ -86,3 +86,4 @@ export async function deleteProduct(id) {
       console.error('Error al eliminar el producto:', error);
   }
 }
+
