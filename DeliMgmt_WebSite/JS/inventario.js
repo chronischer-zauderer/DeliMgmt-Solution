@@ -1,4 +1,4 @@
-import { fetchProducts, createProduct, updateProduct, deleteProduct } from './api.js';
+import { fetchProducts,fetchProduct, createProduct, updateProduct, deleteProduct } from './api.js';
 import { fetchCategories } from './category.js';
 import { fetchSuppliers } from './supplier.js';
 
@@ -135,11 +135,12 @@ document.querySelector('table').addEventListener('click', async (event) => {
     const id = event.target.dataset.id;
     console.log(id)
     try {
-      const product = await fetchProducts(id); // Asegúrate de que esta función esté implementada para obtener un solo producto
-      
+      const product = await fetchProduct(id); // Asegúrate de que esta función esté implementada para obtener un solo producto
+      console.log(fetchProduct(id))
       currentProductId = id;
       
       document.getElementById('updateProductCode').value = product.productCode || '';
+      console.log(product.productCode)
       document.getElementById('updateProductName').value = product.name || '';
       document.getElementById('updateProductCategory').value = product.category ? product.category.categoryId : '';
       document.getElementById('updateProductPrice').value = product.price || '';

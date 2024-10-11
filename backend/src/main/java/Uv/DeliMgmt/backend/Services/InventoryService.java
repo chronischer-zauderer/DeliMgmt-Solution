@@ -70,4 +70,7 @@ public class InventoryService {
         }
     }
 
+    public Optional<Product> GetProductById(long id) {
+        return productRepository.findById(id);
+    }
 }
