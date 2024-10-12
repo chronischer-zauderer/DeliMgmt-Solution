@@ -65,9 +65,9 @@ th:last-child {
 .container-Inventory {
 padding: 10px;
 margin: 3% auto; /* Centra horizontalmente y añade margen superior e inferior */
-max-width: 1150px; /* Limita el ancho máximo */
+max-width: 1200px; /* Limita el ancho máximo */
 width: 100%; /* Asegura que el contenedor se ajuste al ancho disponible hasta el máximo */
-height: 700px;
+height: 860px;
 background: #dcf8f3;
 border-radius: 2%;
 border-style: inset;
@@ -88,7 +88,7 @@ border-radius: 10px;
 .container-Search{
   width: 300px;
   margin-left: 73%;
-  margin-top: -52.5%;
+  margin-top: -51%;
 }
 .container-imageProduct{
   width: 250px;
@@ -106,4 +106,37 @@ border-radius: 10px;
 .container-Buttons{
   margin-left: 73%;
   margin-top: 3.5%;
+}
+.container-alertaStock{
+  margin-top: -22%;
+  margin-left: 5%;
+}
+.container-table-alerta{
+    width: 800px;
+    height: 200px;
+    border-collapse: collapse;
+    background-color: #f9f9f9; 
+    border-radius: 10px; 
+    overflow: hidden; 
+
+    th {
+      background-color: #c49999; 
+      color: white; 
+      text-align: left; 
+      padding: 12px; 
+      font-weight: bold; 
+      }
+
+    .scrollable{
+        max-height:200px ;
+        max-width: 812px;
+        overflow-y: auto;
+      }
+    .scrollable::-webkit-scrollbar{
+        width: 10px;
+      }
+    .scrollable::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 10px;
+      }
 }
