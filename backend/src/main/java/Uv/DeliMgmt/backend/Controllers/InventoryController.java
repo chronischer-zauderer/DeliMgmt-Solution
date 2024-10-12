@@ -27,6 +27,10 @@ public class InventoryController {
     public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.ok(inventoryService.getAllProducts());
     }
+    @GetMapping(value = "listarPorId/{id}",headers = "Accept=application/json")
+    public Optional<Product> listarPorId(@PathVariable long id) {
+        return inventoryService.GetProductById(id);
+    }
 
     // Create a product
     @PostMapping(value = "crearProducto", headers = "Accept=application/json")

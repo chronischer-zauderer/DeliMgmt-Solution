@@ -1,15 +1,17 @@
 body {
     font-family: Georgia, 'Times New Roman', Times, serif;
+    margin: 0;
 }
 
-.navbar-brand{
-    margin-left:45%;
+.navbar-brand {
+    margin-left: 45%;
 }
 
-.contenedor{
-    margin-top: 5%;
-    margin-left: 33%;
-    position: relative;
+.contenedor {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 400px;
     background-color: #dcf8f3;
     border: 2px solid #99c4bc;
@@ -19,83 +21,84 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
 
-
-.contenedor h2{
+.contenedor h2 {
     font-size: 2.3rem;
     color: #000000;
     text-align: center;
 }
 
-.input-contenedor{
+.input-contenedor {
     position: relative;
     margin: 30px 0;
     width: 300px;
     border-bottom: 2px solid #99c4bc;
-
 }
-.input-contenedor label{
-position: absolute;
-top: 50%;
-left: 5px;
-transform: translateY(-50%);
-color: #000000;
-font-size: 1rem;
-pointer-events: none;
-transition: .6s;
-font-weight: bold;
 
+.input-contenedor label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    color: #000000;
+    font-size: 1rem;
+    pointer-events: none;
+    transition: .6s;
+    font-weight: bold;
 }
+
 input:focus ~ label,
-input:valid ~ label{
-top: -5px;
-
+input:valid ~ label {
+    top: -5px;
 }
 
-.input-contenedor input{
+.input-contenedor input {
     width: 100%;
     height: 50px;
     background-color: transparent;
     border: none;
     outline: none;
     font-size: 1rem;
-    padding: - 35px 0 5px;
+    padding: 0 0 5px;
     color: #000000;
 }
 
-.input-contenedor i{
+/* Ajustes en el icono del ojo */
+.input-contenedor i {
     position: absolute;
     color: #000000;
-    font-size: 1.6rem;
-    top: 19px;
-    right: 8px;
+    font-size: 1.4rem; /* Ajusta el tamaño del ícono */
+    top: 50%; /* Alinea el ícono verticalmente */
+    right: 10px; /* Ajusta la posición horizontal */
+    transform: translateY(-50%); /* Centra el ícono verticalmente */
+    cursor: pointer;
 }
 
-.olvidar{
+.olvidar {
     margin: -15px 0 15px;
     font-size: .9em;
     color: #000000;
     display: flex;
     justify-content: center;
 }
-.olvidar label input{
+
+.olvidar label input {
     margin: 3px;
 }
 
-.olvidar label a{
+.olvidar label a {
     color: #000000;
     text-decoration: none;
     transition: .3s;
     font-size: .9em;
 }
 
-.olvidar label a:hover{
+.olvidar label a:hover {
     text-decoration: underline;
 }
 
-button{
+button {
     width: 100%;
     height: 45px;
     border-radius: 40px;
@@ -107,27 +110,31 @@ button{
     font-size: 1rem;
     transition: .4s;
 }
-button:hover{
+
+button:hover {
     background: #99c4bc;
     opacity: .9;
 }
 
-.registrar{
+.registrar {
     font-size: .8rem;
     color: #fff;
     text-align: center;
     margin: 20px 0 10px;
+}a
 
-}
-
-.registrar p a{
+.registrar p a {
     text-decoration: none;
     color: #fff;
     font-weight: bold;
     transition: .3s;
-
 }
 
-.registrar  p a:hover{
+.registrar p a:hover {
     text-decoration: underline;
+}
+
+/* Elimina la imagen predeterminada del campo password */
+input[type="password"] {
+    background-image: none !important;
 }

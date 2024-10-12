@@ -11,6 +11,7 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
     crossorigin="anonymous"
   />
+  <script src="../Js/auth.js" ></script>
 </head>
 <body>
   <nav class="navbar navbar-expand-sm" style="background-color: #e3f2fd">
@@ -29,7 +30,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto">
-          <a class="nav-link active" aria-current="page" href="Index.html">Exit</a>
+          <a class="nav-link active" aria-current="page" href="#" id="logoutBtn">Exit</a>
           <a class="nav-link active" href="Inventario.html">Inventario</a>
           <a class="nav-link active" href="Ventas.html">Ventas</a>
           <a class="nav-link active" href="Clientes.html">Clientes</a>
@@ -97,6 +98,27 @@
       <button class="btn btn-outline-primary" type="button" id="btnAgregarProducto">Add</button>
     </div>
   </div>
+  <!-- Panel de alerta para ver los productos con stock bajo -->
+  <div class="container-alertaStock">
+    <h4>Panel de Alerta</h4>
+    <div class="container-table-alerta">
+      <table class="tableAlerta">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Categoria</th>
+            <th>Proveedor</th>
+            <th>Stock</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Aquí se llenará dinámicamente con JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
   <!-- Modal para subir archivos -->
   <div class="modal fade" id="fileUploadModal" tabindex="-1" aria-labelledby="fileUploadModalLabel" aria-hidden="true">
@@ -217,5 +239,9 @@
   <script src="../Js/api.js" type="module"></script>
   <script src="../Js/inventario.js" type="module"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script type="module">
+    import { logout } from '../Js/login.js'; // Asegúrate de que la ruta sea correcta
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+</script>
 </body>
 </html>
