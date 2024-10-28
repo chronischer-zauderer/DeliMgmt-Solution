@@ -39,12 +39,21 @@ async function updateTable() {
           <button class="btn btn-outline-danger btn-delete" data-id="${product.productId}">Delete</button>
         </td>
       `;
+
+      // Agregar evento de clic para cambiar la imagen
+      row.addEventListener('click', () => {
+        const productImage = document.getElementById('product-image');
+        console.log(productImage)
+        productImage.src = `../RESURCES/${product.imageUrl}`; // Asegúrate de que `imageUrl` esté en el formato correcto
+      });
+
       tbody.appendChild(row);
     });
   } catch (error) {
     console.error('Error al cargar los productos:', error);
   }
 }
+
 
 async function loadCategoryOptions() {
   const categorySelect = document.querySelector('#Categoria');
@@ -98,6 +107,7 @@ async function loadOptions(selectElement, fetchFunction, valueKey, textKey, defa
 }
 
 // Evento para crear un nuevo producto
+// Evento para crear un nuevo producto
 document.querySelector('.btn-outline-primary').addEventListener('click', async () => {
   const selectElementCategory = document.querySelector('#Categoria');
   const selectElementProveedor = document.querySelector('#Proveedor');
@@ -111,23 +121,42 @@ document.querySelector('.btn-outline-primary').addEventListener('click', async (
   const stockQuantity = parseInt(document.querySelector('input[placeholder="Stock"]').value);
   const description = document.querySelector('input[placeholder="Descripción"]').value;
 
+  // Captura el archivo de imagen
+  const imageInput = document.getElementById('imageInput');
+  const imageFile = imageInput.files[0]; // Obtiene el archivo de imagen
+
+  // Si hay un archivo de imagen, subirlo
+  let imageUrl = '';
+  if (imageFile) {
+      try {
+          imageUrl = await uploadImage(imageFile); // Llama a la función de subida de imagen
+      } catch (error) {
+          console.error('Error al subir la imagen:', error);
+          return; // Detener el proceso si falla la subida de la imagen
+      }
+  }
+
   const newProduct = {
-    productCode,
-    name: productName || 'Sin nombre',
-    category: categoryId !== null ? { categoryId: categoryId } : null,
-    price: isNaN(price) ? 0 : price,
-    supplier: supplierId !== null ? { supplierId: supplierId } : null,
-    stockQuantity: isNaN(stockQuantity) ? 0 : stockQuantity,
-    description: description || 'Sin descripción'
+      productCode,
+      name: productName || 'Sin nombre',
+      category: categoryId !== null ? { categoryId: categoryId } : null,
+      price: isNaN(price) ? 0 : price,
+      supplier: supplierId !== null ? { supplierId: supplierId } : null,
+      stockQuantity: isNaN(stockQuantity) ? 0 : stockQuantity,
+      description: description || 'Sin descripción',
+      imageUrl // Agregar la URL de la imagen aquí
   };
 
   try {
-    await createProduct(newProduct);
-    await updateTable();
+      await createProduct(newProduct);
+      await updateTable();
+      // Limpiar el campo de archivo
+      imageInput.value = '';
   } catch (error) {
-    console.error('Error al crear el producto:', error);
+      console.error('Error al crear el producto:', error);
   }
 });
+
 
 // Evento para abrir el modal de actualización
 document.querySelector('table').addEventListener('click', async (event) => {
@@ -192,7 +221,7 @@ document.querySelector('table').addEventListener('click', async (event) => {
   if (event.target.classList.contains('btn-delete')) {
     const id = event.target.dataset.id;
 
-    if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+      if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
       try {
         console.log(id);
         await deleteProduct(id);
@@ -203,3 +232,110 @@ document.querySelector('table').addEventListener('click', async (event) => {
     }
   }
 });
+
+document.getElementById('searchInput').addEventListener('input', function(event) {
+  const searchTerm = event.target.value.toLowerCase();
+  filterProducts(searchTerm);
+});
+
+async function filterProducts(searchTerm) {
+  const tbody = document.querySelector('table tbody');
+
+  try {
+    const products = await fetchProducts(); // Obtener todos los productos
+    tbody.innerHTML = ''; // Limpiar la tabla
+
+    products
+      .filter(product => {
+        // Verificamos que `productCode` exista y sea una cadena antes de usar `toLowerCase()`
+        const codeMatch = product.productCode && product.productCode.toLowerCase().includes(searchTerm.toLowerCase());
+        const nameMatch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const categoryMatch = product.category && product.category.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const supplierMatch = product.supplier && product.supplier.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const descriptionMatch = product.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+        // Filtrar por código de producto, nombre, categoría, proveedor o descripción
+        return codeMatch || nameMatch || categoryMatch || supplierMatch || descriptionMatch;
+      })
+      .forEach(product => {
+        const category = product.category ? product.category.name : 'Sin categoría';
+        const supplier = product.supplier ? product.supplier.name : 'Sin proveedor';
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${product.productCode || 'Sin código'}</td>
+          <td>${product.name || 'Sin nombre'}</td>
+          <td>${category}</td>
+          <td>${product.price ? product.price.toFixed(2) : 'Sin precio'}</td>
+          <td>${supplier}</td>
+          <td>${product.stockQuantity || 0}</td>
+          <td>${product.description || 'Sin descripción'}</td>
+          <td>
+            <button class="btn btn-outline-success btn-update" data-id="${product.productId}">Update</button>
+            <button class="btn btn-outline-danger btn-delete" data-id="${product.productId}">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+  } catch (error) {
+    console.error('Error al filtrar productos:', error);
+  }
+}
+
+
+
+// Función para subir una imagen
+export async function uploadImage(imageFile) {
+  const token = localStorage.getItem('token'); // Obtiene el token del almacenamiento local
+  if (!token) {
+      alert('Por favor, inicia sesión antes de subir una imagen.');
+      return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', imageFile); // Cambia 'image' a 'file' para que coincida con tu controlador
+
+  try {
+      const response = await fetch('http://localhost:8081/api/images/upload', {
+          method: 'POST',
+          headers: {
+              'Authorization': `Bearer ${token}`, // Incluye el token en la cabecera
+              // 'Content-Type': 'multipart/form-data' // No incluyas este encabezado
+          },
+          body: formData, // Envía el FormData con la imagen
+      });
+
+      const responseText = await response.text(); // Obtiene el cuerpo de la respuesta como texto
+      if (!response.ok) {
+          throw new Error(responseText); // Lanza un error con el mensaje
+      }
+      console.log(responseText)
+      alert(responseText); 
+      return responseText;
+       
+  } catch (error) {
+      console.error('Error:', error);
+      alert(`Error al subir la imagen: ${error.message}`);
+      throw error; // Lanza el error para manejarlo en el llamador
+  }
+}
+function handleImageUpload(event) {
+  const imageInput = event.target;
+  const file = imageInput.files[0];
+  const productImage = document.getElementById('product-image');
+  console.log(productImage)
+
+  if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+          productImage.src = e.target.result; // Muestra la imagen seleccionada
+          productImage.style.display = 'block'; // Muestra la imagen
+      };
+      reader.readAsDataURL(file);
+  } else {
+      productImage.src = ''; // Limpia la imagen si no se selecciona ninguna
+      productImage.style.display = 'none'; // Oculta la imagen
+  }
+}
+
+
