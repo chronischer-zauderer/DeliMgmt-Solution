@@ -13,6 +13,9 @@ body {
     background-color: white;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .header h1 {
@@ -21,7 +24,8 @@ body {
 }
 
 .search-bar {
-    margin-top: 10px;
+    display: flex;
+    align-items: center;
 }
 
 .search-bar input {
@@ -35,6 +39,7 @@ body {
     color: white;
     border: none;
     cursor: pointer;
+    margin-left: 5px;
 }
 
 .main-content {
@@ -87,6 +92,7 @@ th {
     border: none;
     cursor: pointer;
     font-size: 16px;
+    margin: 5px;
 }
 
 .button-red {
@@ -101,4 +107,57 @@ th {
 
 .amount-red {
     color: #f44336;
+}
+
+/* Dropdown Menu Styling */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #009688;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content button {
+    background-color: white;
+    color: #333;
+    padding: 10px 20px;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+.dropdown-content button:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #00796b;
+}
+
+/* Button for Home */
+.header .button {
+    background-color: #00796b;
+    padding: 10px 15px;
+    font-size: 16px;
 }

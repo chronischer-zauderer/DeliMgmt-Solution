@@ -6,6 +6,7 @@ let currentProductId = null; // Para almacenar el ID del producto que se está a
 
 document.addEventListener('DOMContentLoaded', async () => {
   await updateTable();
+  await updateLowStockTable();
   await loadCategoryOptions();
   await loadSupplierOptions();
   await loadUpdateCategoryOptions();
@@ -22,11 +23,12 @@ async function updateTable() {
     tbody.innerHTML = ''; // Limpiar tabla
     
     products.forEach(product => {
-      const category = product.category ? product.category.name : 'Sin categoría';
-      const supplier = product.supplier ? product.supplier.name : 'Sin proveedor';
-      
-      const row = document.createElement('tr');
-      row.innerHTML = `
+      if(product.stockQuantity >= 10){
+        const category = product.category ? product.category.name : 'Sin categoría';
+        const supplier = product.supplier ? product.supplier.name : 'Sin proveedor';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
         <td>${product.productCode || 'Sin código'}</td>
         <td>${product.name || 'Sin nombre'}</td>
         <td>${category}</td>
@@ -44,13 +46,66 @@ async function updateTable() {
       row.addEventListener('click', () => {
         const productImage = document.getElementById('product-image');
         console.log(productImage)
-        productImage.src = `../RESURCES/${product.imageUrl}`; // Asegúrate de que `imageUrl` esté en el formato correcto
+        productImage.src = `../RESURCES${product.imageUrl.replace('/api/images/', '').startsWith('/') ? '' : '/'}${product.imageUrl.replace('/api/images/', '')}`;
       });
 
       tbody.appendChild(row);
+      }
     });
   } catch (error) {
     console.error('Error al cargar los productos:', error);
+  }
+}
+
+async function updateLowStockTable() {
+  const tbody = document.querySelector('.tableAlerta tbody');
+  
+  try {
+    const products = await fetchProducts();
+    console.log('Productos obtenidosss:', products);
+
+    tbody.innerHTML = ''; // Limpiar tabla
+
+    // Filtrar productos con stock menor a 10 y agregar filas a la tabla
+    products.forEach(product => {
+      if (product.stockQuantity < 10) {
+        const category = product.category ? product.category.name : 'Sin categoría';
+        const supplier = product.supplier ? product.supplier.name : 'Sin proveedor';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${product.productCode || 'Sin código'}</td>
+          <td>${product.name || 'Sin nombre'}</td>
+          <td>${category}</td>
+          <td>${product.price ? product.price.toFixed(2) : 'Sin precio'}</td>
+          <td>${supplier}</td>
+          <td>${product.stockQuantity || 0}</td>
+          <td>${product.description || 'Sin descripción'}</td>
+          <td>
+            <button class="btn btn-outline-success btn-update" data-id="${product.productId}">Update</button>
+            <button class="btn btn-outline-danger btn-delete" data-id="${product.productId}">Delete</button>
+          </td>
+        `;
+
+        // Agregar evento de clic para cambiar la imagen del producto
+        row.addEventListener('click', () => {
+          const productImage = document.getElementById('product-image');
+
+          productImage.src = `../RESURCES${product.imageUrl.replace('/api/images/', '').startsWith('/') ? '' : '/'}${product.imageUrl.replace('/api/images/', '')}`;
+        });
+
+        tbody.appendChild(row);
+        console.log(tbody)
+      }
+    });
+
+    // Verificar si no hay productos con bajo stock
+    if (tbody.children.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8">No hay productos con stock bajo</td></tr>';
+    }
+
+  } catch (error) {
+    console.error('Error al cargar los productos de bajo stock:', error);
   }
 }
 
@@ -106,7 +161,6 @@ async function loadOptions(selectElement, fetchFunction, valueKey, textKey, defa
   }
 }
 
-// Evento para crear un nuevo producto
 // Evento para crear un nuevo producto
 document.querySelector('.btn-outline-primary').addEventListener('click', async () => {
   const selectElementCategory = document.querySelector('#Categoria');
@@ -176,7 +230,7 @@ document.querySelector('table').addEventListener('click', async (event) => {
       document.getElementById('updateProductSupplier').value = product.supplier ? product.supplier.supplierId : '';
       document.getElementById('updateProductStock').value = product.stockQuantity || '';
       document.getElementById('updateProductDescription').value = product.description || '';
-
+      console.log(product.imageUrl)
       // Mostrar el modal
       const updateModal = new bootstrap.Modal(document.getElementById('updateProductModal'));
       updateModal.show();
@@ -193,28 +247,53 @@ document.getElementById('confirmUpdateProduct').addEventListener('click', async 
     return;
   }
 
+  // Suponiendo que 'product' tiene la información actual del producto
+  // Asegúrate de tener el 'product' cargado con la URL de la imagen antes de llegar aquí
+  const currentProduct = await fetchProduct(currentProductId);  // Obtén el producto actual
+  const currentImageUrl = currentProduct.imageUrl;  // Guarda la URL de la imagen actual
+
+  // Recopilar la información del producto
   const updatedProduct = {
-    productId : currentProductId,
+    productId: currentProductId,
     productCode: document.getElementById('updateProductCode').value,
     name: document.getElementById('updateProductName').value,
     category: { categoryId: document.getElementById('updateProductCategory').value },
     price: parseFloat(document.getElementById('updateProductPrice').value),
     supplier: { supplierId: document.getElementById('updateProductSupplier').value },
     stockQuantity: parseInt(document.getElementById('updateProductStock').value),
-    description: document.getElementById('updateProductDescription').value
-    
+    description: document.getElementById('updateProductDescription').value,
+    imageUrl: currentImageUrl  // Asignamos la URL actual de la imagen al principio
   };
 
+  // Verifica si se ha seleccionado una nueva imagen
+  const imageFile = document.getElementById('updateProductImage').files[0];
+  console.log(imageFile);
+
+  if (imageFile) {
+    // Si se seleccionó una nueva imagen, subimos la imagen y asignamos la URL
+    try {
+      const imageUrl = await uploadImage(imageFile);  // Llama a la función para subir la imagen
+      updatedProduct.imageUrl = imageUrl;  // Asigna la URL de la imagen al producto actualizado
+    } catch (error) {
+      console.error('Error al subir la imagen:', error);
+      return;  // Detiene la actualización si hubo un error al subir la imagen
+    }
+  }
+
   try {
-    await updateProduct(currentProductId, updatedProduct);
-    await updateTable();
+    // Actualiza el producto con la nueva información (incluyendo la posible nueva imagen)
+    await updateProduct(currentProductId, updatedProduct);  
+    await updateTable();  // Actualiza la tabla de productos
     const updateModal = bootstrap.Modal.getInstance(document.getElementById('updateProductModal'));
-    updateModal.hide();
-    currentProductId = null; // Resetear el ID del producto actual
+    updateModal.hide();  // Cierra el modal
+    currentProductId = null;  // Resetear el ID del producto actual
   } catch (error) {
     console.error('Error al actualizar el producto:', error);
   }
 });
+
+
+
 
 // Evento para eliminar un producto
 document.querySelector('table').addEventListener('click', async (event) => {
@@ -284,23 +363,36 @@ async function filterProducts(searchTerm) {
 
 
 
-// Función para subir una imagen
 export async function uploadImage(imageFile) {
   const token = localStorage.getItem('token'); // Obtiene el token del almacenamiento local
+  
+  // Verificar que el usuario haya iniciado sesión
   if (!token) {
       alert('Por favor, inicia sesión antes de subir una imagen.');
       return;
   }
 
+  // Verificar que se haya seleccionado un archivo de imagen
+  if (!imageFile) {
+      alert('Por favor, selecciona una imagen.');
+      return;
+  }
+
+  // Verificar que el archivo no esté vacío
+  if (imageFile.size === 0) {
+      alert('El archivo está vacío. Por favor, selecciona una imagen válida.');
+      return;
+  }
+
+  // Crear un FormData para enviar el archivo
   const formData = new FormData();
-  formData.append('file', imageFile); // Cambia 'image' a 'file' para que coincida con tu controlador
+  formData.append('file', imageFile); // Cambia 'file' para que coincida con tu controlador
 
   try {
       const response = await fetch('http://localhost:8081/api/images/upload', {
           method: 'POST',
           headers: {
               'Authorization': `Bearer ${token}`, // Incluye el token en la cabecera
-              // 'Content-Type': 'multipart/form-data' // No incluyas este encabezado
           },
           body: formData, // Envía el FormData con la imagen
       });
@@ -309,13 +401,55 @@ export async function uploadImage(imageFile) {
       if (!response.ok) {
           throw new Error(responseText); // Lanza un error con el mensaje
       }
-      console.log(responseText)
-      alert(responseText); 
+      
+      console.log(responseText);
+      alert(responseText); // Muestra el mensaje de éxito
       return responseText;
-       
+
   } catch (error) {
       console.error('Error:', error);
       alert(`Error al subir la imagen: ${error.message}`);
+      throw error; // Lanza el error para manejarlo en el llamador
+  }
+}
+
+export async function updateImage(imageFile, productId) {
+  const token = localStorage.getItem('token'); // Asegúrate de usar 'token' correctamente
+  if (!token) {
+      alert('Por favor, inicia sesión antes de subir una imagen.');
+      return;
+  }
+
+  if (!productId) {
+      alert('Por favor, proporciona un ID de producto válido.');
+      return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', imageFile); // Adjunta la imagen
+  formData.append('productId', productId); // Adjunta el ID del producto
+
+  try {
+      const response = await fetch(`http://localhost:8081/api/images/update/${productId}`, {
+          method: 'POST',
+          headers: {
+              'Authorization': `Bearer ${token}` // Incluye el token en la cabecera
+          },
+          body: formData // Envía el FormData con la imagen y el ID del producto
+      });
+
+      const responseText = await response.text(); // Lee la respuesta como texto
+      if (!response.ok) {
+          throw new Error(responseText); // Lanza un error si la respuesta no es exitosa
+      }
+
+      console.log(responseText);
+      alert(responseText);
+      return responseText;
+
+  } catch (error) {
+      console.error('Error:', error);
+      alert(`Error al actualizar la imagen: ${error.message}`);
       throw error; // Lanza el error para manejarlo en el llamador
   }
 }
