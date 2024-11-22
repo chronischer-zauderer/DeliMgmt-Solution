@@ -31,7 +31,6 @@ public class ImageController {
         if (file.isEmpty() || file == null) {
             return ResponseEntity.badRequest().body("No hay imagen cargada.");
         }
-
         // Crear la carpeta si no existe
         File directory = new File(uploadDir);
         if (!directory.exists()) {
@@ -52,9 +51,6 @@ public class ImageController {
                     .body("Error al subir la imagen: " + e.getMessage());
         }
     }
-
-
-
     @GetMapping("/{fileName:.+}")
     public ResponseEntity<Resource> getImage(@PathVariable String fileName) {
         try {
@@ -72,5 +68,31 @@ public class ImageController {
             return ResponseEntity.badRequest().build();
         }
     }
+    @DeleteMapping("/EliminarImagen/{fileName:.+}")
+    public ResponseEntity<String> deleteImage(@PathVariable String fileName) {
+        try {
+            // Construir la ruta completa del archivo
+            Path filePath = Paths.get(uploadDir).resolve(fileName);
+            File file = filePath.toFile();
+
+            // Verificar si el archivo existe
+            if (!file.exists()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("El archivo no fue encontrado.");
+            }
+
+            // Eliminar el archivo
+            if (file.delete()) {
+                return ResponseEntity.ok("El archivo fue eliminado exitosamente.");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("No se pudo eliminar el archivo.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al intentar eliminar el archivo: " + e.getMessage());
+        }
+    }
+
 
 }

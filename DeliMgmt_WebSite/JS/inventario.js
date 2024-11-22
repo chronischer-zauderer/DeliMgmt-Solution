@@ -114,20 +114,12 @@ async function loadCategoryOptions() {
   const categorySelect = document.querySelector('#Categoria');
   await loadOptions(categorySelect, fetchCategories, 'categoryId', 'name', 'Selecciona una categoría');
   
-  const newCategoryOption = document.createElement('option');
-  newCategoryOption.value = 'nueva-categoria';
-  newCategoryOption.textContent = 'Crear nueva categoría';
-  categorySelect.appendChild(newCategoryOption);
 }
 
 async function loadSupplierOptions() {
   const supplierSelect = document.querySelector('#Proveedor');
   await loadOptions(supplierSelect, fetchSuppliers, 'supplierId', 'name', 'Selecciona un proveedor');
-  
-  const newSupplierOption = document.createElement('option');
-  newSupplierOption.value = 'nuevo-proveedor';
-  newSupplierOption.textContent = 'Crear nuevo proveedor';
-  supplierSelect.appendChild(newSupplierOption);
+
 }
 
 async function loadUpdateCategoryOptions() {
@@ -247,8 +239,6 @@ document.getElementById('confirmUpdateProduct').addEventListener('click', async 
     return;
   }
 
-  // Suponiendo que 'product' tiene la información actual del producto
-  // Asegúrate de tener el 'product' cargado con la URL de la imagen antes de llegar aquí
   const currentProduct = await fetchProduct(currentProductId);  // Obtén el producto actual
   const currentImageUrl = currentProduct.imageUrl;  // Guarda la URL de la imagen actual
 
@@ -264,7 +254,6 @@ document.getElementById('confirmUpdateProduct').addEventListener('click', async 
     description: document.getElementById('updateProductDescription').value,
     imageUrl: currentImageUrl  // Asignamos la URL actual de la imagen al principio
   };
-
   // Verifica si se ha seleccionado una nueva imagen
   const imageFile = document.getElementById('updateProductImage').files[0];
   console.log(imageFile);
@@ -298,19 +287,35 @@ document.getElementById('confirmUpdateProduct').addEventListener('click', async 
 // Evento para eliminar un producto
 document.querySelector('table').addEventListener('click', async (event) => {
   if (event.target.classList.contains('btn-delete')) {
-    const id = event.target.dataset.id;
-
-      if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+    const id = event.target.dataset.id; // Obtén el ID del producto
+    const product = await fetchProduct(id); // Obtén el nombre del archivo de imagen
+    const imageFilename = product.imageUrl.replace('/api/images/', '').replace(/^\/+/, '');
+    console.log(imageFilename)
+    if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
       try {
-        console.log(id);
+        console.log(`ID del producto: ${id}, Archivo de imagen: ${imageFilename}`);
+        
+        // Elimina la imagen asociada al producto
+        if (imageFilename) {
+          await deleteImage(imageFilename);
+          console.log('Imagen eliminada correctamente');
+        }
+
+        // Elimina el producto
         await deleteProduct(id);
+        console.log('Producto eliminado correctamente');
+
+        // Actualiza la tabla
         await updateTable();
+        console.log('Tabla actualizada');
       } catch (error) {
         console.error('Error al eliminar el producto:', error);
+        alert('Hubo un problema al eliminar el producto. Inténtalo de nuevo.');
       }
     }
   }
 });
+
 
 document.getElementById('searchInput').addEventListener('input', function(event) {
   const searchTerm = event.target.value.toLowerCase();
@@ -361,8 +366,6 @@ async function filterProducts(searchTerm) {
   }
 }
 
-
-
 export async function uploadImage(imageFile) {
   const token = localStorage.getItem('token'); // Obtiene el token del almacenamiento local
   
@@ -387,7 +390,6 @@ export async function uploadImage(imageFile) {
   // Crear un FormData para enviar el archivo
   const formData = new FormData();
   formData.append('file', imageFile); // Cambia 'file' para que coincida con tu controlador
-
   try {
       const response = await fetch('http://localhost:8081/api/images/upload', {
           method: 'POST',
@@ -410,6 +412,35 @@ export async function uploadImage(imageFile) {
       console.error('Error:', error);
       alert(`Error al subir la imagen: ${error.message}`);
       throw error; // Lanza el error para manejarlo en el llamador
+  }
+}
+
+async function deleteImage(imageFilename) {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Por favor, inicia sesión antes de eliminar una imagen.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:8081/api/images/EliminarImagen/${imageFilename}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Incluye el token en la cabecera
+      },
+    });
+
+    // Manejar la respuesta según el estado HTTP
+    const responseText = await response.text(); // Leer el mensaje de respuesta del backend
+    if (!response.ok) {
+      throw new Error(responseText); // Lanzar el mensaje de error
+    }
+
+    console.log(responseText);
+    alert(responseText); // Mostrar el mensaje al usuario
+  } catch (error) {
+    console.error('Error al eliminar la imagen:', error);
+    alert(`Error al eliminar la imagen: ${error.message}`);
   }
 }
 
