@@ -1,8 +1,11 @@
 package Uv.DeliMgmt.backend.Controllers;
 
 import Uv.DeliMgmt.backend.Models.Customer;
+import Uv.DeliMgmt.backend.Repositories.CustomerRepository;
 import Uv.DeliMgmt.backend.Services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +15,8 @@ import java.util.Optional;
 @RequestMapping("/api/customer")
 public class CustomerController {
     private final CustomerService customerService;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Autowired
     public CustomerController(CustomerService customerService) {
@@ -33,9 +38,21 @@ public class CustomerController {
         return customerService.getCustomerById(id);
     }
 
-    @PutMapping(value = "Actualizar", headers = "Accept=application/json")
-    public void updateCustomer(@RequestBody Customer customer) {
-        customerService.UpdateCustomer(customer);
+    @PutMapping("editar/{id}")
+    public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody Customer updatedCustomer) {
+        Optional<Customer> customerOpt = customerRepository.findById(id);
+        if (customerOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrado.");
+        }
+
+        Customer customer = customerOpt.get();
+        customer.setName(updatedCustomer.getName());
+        customer.setEmail(updatedCustomer.getEmail());
+        customer.setPhone(updatedCustomer.getPhone());
+        customer.setAddress(updatedCustomer.getAddress());
+
+        customerRepository.save(customer);
+        return ResponseEntity.ok("Cliente actualizado con éxito.");
     }
 
     @DeleteMapping(value = "eliminar/{id}", headers = "Accept=application/json")

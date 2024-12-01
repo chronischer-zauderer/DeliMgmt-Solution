@@ -85,7 +85,7 @@
       <input class="form-control me-2" type="text" placeholder="Codigo De Producto" style="margin-top: 0.5%" />
     </div>
 
-    <<div class="container-Buttons">
+    <div class="container-Buttons">
       <!-- Botón para subir imagen -->
       <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#fileUploadModal">
         Subir Imagen
@@ -95,13 +95,67 @@
     </div>
     <div class="container-Buttons">
       <!-- Botón para nueva categoría -->
-      <button class="btn btn-outline-info" type="button" id="btnCrearCategoria">Nueva Categoria</button>
     </div>
+    <div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="createCategoryModalLabel">Nueva Categoria</h5>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <h6>Introduce el nombre de la nueva categoría:</h6>
+              <!-- Aquí colocas el input para el nombre de la categoría -->
+              <input type="text" id="categoryNameInput" class="form-control" placeholder="Nombre de la categoría" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" id="saveCategoryButton">Guardar Categoría</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Botón para abrir el modal de nueva categoría -->
+    <div class="container-Buttons">
+      <button class="btn btn-outline-info" type="button" id="btnCrearCategoria" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+        Nueva Categoria
+      </button>
+    </div>
+    
     
     <div class="container-Buttons">
       <!-- Botón para nuevo proveedor -->
-      <button class="btn btn-outline-warning" type="button" id="btnCrearProveedor">Nuevo Proveedor</button>
+      <button class="btn btn-outline-warning" type="button" id="btnCrearProveedor" data-bs-toggle="modal" data-bs-target="#createProviderModal">
+        Nuevo Proveedor
+      </button>
     </div>
+    
+    <!-- Modal para nuevo proveedor -->
+    <div class="modal fade" id="createProviderModal" tabindex="-1" aria-labelledby="createProviderModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="createProviderModalLabel">Nuevo Proveedor</h5>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <h6>Introduce los datos del nuevo proveedor:</h6>
+              
+              <!-- Input para nombre del proveedor -->
+              <input type="text" id="providerNameInput" class="form-control" placeholder="Nombre del proveedor" />
+              
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" id="saveProviderButton">Guardar Proveedor</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     
     <div class="container-alertaStock">
       <h4>Panel de Alerta</h4>
@@ -228,6 +282,22 @@
           <button type="button" class="btn btn-primary" id="confirmUpdateProduct">Actualizar Producto</button>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="modal fade" id="sessionExpiredModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Sesión Expirada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tu sesión ha expirado. Por favor, inicia sesión nuevamente.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="redirectToLogin()">Iniciar Sesión</button>
+            </div>
+        </div>
     </div>
   </div>
 

@@ -29,7 +29,6 @@
         <h1>Sistema de Gestión de Clientes</h1>
         <div class="button-group">
             <button class="button" onclick="window.location.href='Inventario.html'">Inicio</button>
-            <button class="button" onclick="window.location.href='Registrar.html'">Registrar</button>
             <button class="button" onclick="window.location.href='HistorialCompras.html'">Historial de compras</button>
         </div>
     </header>
@@ -39,10 +38,10 @@
         <section class="form-section">
             <h2>Agregar Nuevo Cliente</h2>
             <div class="form-grid">
-                <input type="text" placeholder="Nombre">
-                <input type="email" placeholder="Email">
-                <input type="tel" placeholder="Teléfono">
-                <button>Agregar Cliente</button>
+                <input class="form-control clientes-1" type="text" placeholder="Nombre">
+                <input class="form-control clientes-2" type="email" placeholder="Email">
+                <input class="form-control clientes-3" type="tel" placeholder="Teléfono">
+                <button class="btn btn-add" type="button">Agregar Cliente</button>
             </div>
         </section>
 
@@ -50,64 +49,66 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <h3>Total Clientes</h3>
-                <div class="stat-number">1</div>
-            </div>
-            <div class="stat-card">
-                <h3>Clientes Activos</h3>
-                <div class="stat-number">1</div>
-            </div>
-            <div class="stat-card">
-                <h3>Clientes Inactivos</h3>
-                <div class="stat-number">1</div>
+                <div class="stat-number" id="total-clients">1</div>
             </div>
         </div>
-
+        
         <!-- Lista de Clientes -->
-        <div class="customers-grid">
-            <!-- Cliente 1 -->
-            <div class="customer-card">
-                <div class="customer-header">
-                    <span class="status status-active">Activo</span>
-                </div>
-                <div class="customer-info">
-                    <div class="customer-name">Juan Pérez</div>
-                    <div class="customer-contact">
-                        <div>juan@email.com</div>
-                        <div>555-0101</div>
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="edit-btn">Editar</button>
-                    <button class="delete-btn">Eliminar</button>
-                </div>
-            </div>
+        <div class="customers-grid" id="customers-grid">
+            <!-- Los clientes serán agregados dinámicamente aquí -->
+        </div>
+    </div>
+    <!-- Modal para Editar Cliente -->
+<div id="editCustomerModal" class="modal fade" tabindex="-1" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editCustomerModalLabel">Editar Cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editCustomerForm">
+            <label for="edit-name">Nombre:</label>
+            <input type="text" id="edit-name" class="form-control" placeholder=""/>
+            
+            <label for="edit-email">Correo Electrónico:</label>
+            <input type="email" id="edit-email" class="form-control" placeholder="" />
+  
+            <label for="edit-phone">Teléfono:</label>
+            <input type="text" id="edit-phone" class="form-control" placeholder="" />
+            <div><br></div>
+  
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <button type="button" id="cancel-edit" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            <!-- Cliente 2 -->
-            <div class="customer-card">
-                <div class="customer-header">
-                    <span class="status status-inactive">Inactivo</span>
-                </div>
-                <div class="customer-info">
-                    <div class="customer-name">María García</div>
-                    <div class="customer-contact">
-                        <div>maria@email.com</div>
-                        <div>555-0102</div>
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="edit-btn">Editar</button>
-                    <button class="delete-btn">Eliminar</button>
-                </div>
+  <div class="modal fade" id="sessionExpiredModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Sesión Expirada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-                </div>
+            <div class="modal-body">
+                Tu sesión ha expirado. Por favor, inicia sesión nuevamente.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="redirectToLogin()">Iniciar Sesión</button>
             </div>
         </div>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script type="module">
-      import { logout } from '../Js/login.js'; // Asegúrate de que la ruta sea correcta
-      document.getElementById('logoutBtn').addEventListener('click', logout);
-  </script>
   </body>
+  <script type="module">
+    import { logout } from '../Js/login.js'; // Asegúrate de que la ruta sea correcta
+
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+</script>
+  <script src="../JS/clients.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </html>

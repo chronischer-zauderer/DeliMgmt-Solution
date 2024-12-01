@@ -148,6 +148,9 @@ button:hover {
     gap: 10px;
     justify-content: flex-end;
 }
+.btn-add{
+    background-color: #00796b;
+}
 
 .edit-btn {
     background-color: #00796b;

@@ -42,6 +42,22 @@
     <div class="container">
         <h1>Welcome to DeliMgmt - Start to Work</h1>
     </div>
+    <div class="modal fade" id="sessionExpiredModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Sesión Expirada</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Tu sesión ha expirado. Por favor, inicia sesión nuevamente.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="redirectToLogin()">Iniciar Sesión</button>
+                </div>
+            </div>
+        </div>
+      </div>
 
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
