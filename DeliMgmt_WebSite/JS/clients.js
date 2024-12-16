@@ -211,26 +211,6 @@ fetchCustomers();
   
   
   
-// Función para eliminar un cliente
-async function deleteCustomer(id) {
-    const token = localStorage.getItem('token');
-    if (!token) throw new Error('Token is missing. Please authenticate first.');
-
-    try {
-        const response = await fetch(`http://localhost:8081/api/customer/eliminar/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok) throw new Error(`Error deleting customer: ${response.status}`);
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-}
 
 
 document.getElementById('customers-grid').addEventListener('click', async (event) => {
@@ -317,6 +297,42 @@ document.getElementById('cancel-edit').addEventListener('click', () => {
     currentCustomerId = null;  // Restablece el ID del cliente actual
   });
   
+async function deleteCustomer(id) {
+  const token = localStorage.getItem('token'); // O donde almacenes el token
+  if (!token) {
+    throw new Error('Token is missing. Please authenticate first.');
+  }
 
+  try {
+    const response = await fetch(`http://localhost:8081/api/customer/eliminar/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Agregado encabezado de autenticación
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status}`);
+    }
+    
+  } catch (error) {
+    console.error('Error al eliminar el producto:', error);
+  }
+}
 
+document.getElementById('customers-grid').addEventListener('click',async(event) =>{
+  const deleteButton = event.target.closest('.delete-btn');
+  if (!deleteButton) return; // Si el clic no fue sobre un botón de editar, salimos
+  
+    const id = deleteButton.dataset.id; // Obtén el ID del cliente
+    console.log('ID recibido:', id);
+    
+    try{
+      await deleteCustomer(id);
+      await fetchCustomers();
+    }catch(error){
+      console.error('Error al eliminar el cliente:', error);
+    }
+});
   

@@ -54,35 +54,79 @@ export async function fetchProduct(id) {
   }
 }
 
-
-
-// Función para obtener movimientos de inventario por producto
-export async function fetchInventoryMovementsByProduct(productId) {
+export async function createCategory(category) {
   const token = localStorage.getItem('token'); // O donde almacenes el token
   if (!token) {
     throw new Error('Token is missing. Please authenticate first.');
   }
-
   try {
-    const response = await fetch(`http://localhost:8081/api/inventory/listarPorProducto/${productId}`, {
-      method: 'GET',
+    const response = await fetch('http://localhost:8081/api/category/crear', {
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        'Authorization': `Bearer ${token}`, // Agregado encabezado de autenticación
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(category),
     });
 
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
+    // Intentar obtener el contenido de la respuesta
+    const contentType = response.headers.get('Content-Type');
+    let responseBody = '';
+
+    if (contentType && contentType.includes('application/json')) {
+      // Intentar obtener JSON si el Content-Type es JSON
+      responseBody = await response.json();
+    } else {
+      // Obtener el texto de la respuesta si no es JSON
+      responseBody = await response.text();
     }
 
-    return response.json();
+    // Imprimir el contenido de la respuesta
+    console.log('Response body:', responseBody);
+
+    // Verificar el estado de la respuesta
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status} - ${responseBody}`);
+    }
   } catch (error) {
-    console.error('Error fetching inventory movements by product:', error);
-    throw error; // Re-lanza el error para que pueda ser manejado donde se llama a esta función
+    console.error('Error adding category:', error);
   }
 }
 
+export async function createSupplier(supplier) {
+  const token = localStorage.getItem('token'); // O donde almacenes el token
+  if (!token) {
+    throw new Error('Token is missing. Please authenticate first.');
+  }
+  try {
+    const response = await fetch('http://localhost:8081/api/supplier/crear', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Agregado encabezado de autenticación
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(supplier),
+    });
+
+    const contentType = response.headers.get('Content-Type');
+    let responseBody = '';
+
+    if (contentType && contentType.includes('application/json')) {
+      responseBody = await response.json();
+    } else {
+      responseBody = await response.text();
+    }
+
+    console.log('Response body:', responseBody);
+
+    // Verificar el estado de la respuesta
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status} - ${responseBody}`);
+    }
+  } catch (error) {
+    console.error('Error adding supplier:', error);
+  }
+}
 
 // Función para crear un nuevo producto
 export async function createProduct(product) {

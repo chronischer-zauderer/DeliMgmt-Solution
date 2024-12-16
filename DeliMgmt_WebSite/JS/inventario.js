@@ -1,4 +1,4 @@
-import { fetchProducts,fetchProduct, createProduct, updateProduct, deleteProduct } from './api.js';
+import { fetchProducts,fetchProduct, createProduct, updateProduct, deleteProduct,createCategory,createSupplier } from './api.js';
 import { fetchCategories } from './category.js';
 import { fetchSuppliers } from './supplier.js';
 
@@ -204,7 +204,8 @@ document.querySelector('.btn-outline-primary').addEventListener('click', async (
 });
 
 
-// Evento para abrir el modal de actualización
+
+
 document.querySelector('table').addEventListener('click', async (event) => {
   if (event.target.classList.contains('btn-update')) {
     const id = event.target.dataset.id;
@@ -232,7 +233,6 @@ document.querySelector('table').addEventListener('click', async (event) => {
   }
 });
 
-// Evento para confirmar la actualización del producto
 document.getElementById('confirmUpdateProduct').addEventListener('click', async () => {
   if (currentProductId === null) {
     console.error('No se ha seleccionado ningún producto para actualizar');
@@ -281,6 +281,60 @@ document.getElementById('confirmUpdateProduct').addEventListener('click', async 
   }
 });
 
+document.getElementById("saveCategoryButton").addEventListener('click', async () => {
+  const categoryName = document.getElementById('categoryNameInput').value.trim();
+
+  if (!categoryName) {
+    alert('Por favor ingresa un nombre para la categoría.');
+    return;
+  }
+
+  const NewCat = {
+    name: categoryName,
+    description: ""
+  };
+
+  try {
+    await createCategory(NewCat);
+    await loadCategoryOptions();
+
+    // Ocultar el modal después de guardar
+    const modal = bootstrap.Modal.getInstance(document.getElementById('createCategoryModal'));
+    modal.hide();
+  } catch (error) {
+    console.error('Error al crear la categoría:', error);
+    alert('Hubo un problema al crear la categoría. Por favor, intenta nuevamente.');
+  }
+});
+
+document.getElementById("saveProviderButton").addEventListener('click', async () => {
+  const providerName = document.getElementById('providerNameInput').value.trim();
+
+  if (!providerName) {
+    alert('Por favor ingresa un nombre para la categoría.');
+    return;
+  }
+
+  const NewSup = {
+    name: providerName,
+    address: "",
+    contact_person:"",
+    email:"",
+    phone:""
+  };
+
+  try {
+    await createSupplier(NewSup);
+    await loadSupplierOptions();
+
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById('createProviderModal'));
+    modal.hide();
+  } catch (error) {
+    console.error('Error al crear la Supplier:', error);
+    alert('Hubo un problema al crear la Supplier. Por favor, intenta nuevamente.');
+  }
+});
 
 
 
